@@ -12,8 +12,8 @@ from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.core.database import init_db_asi_gest
 
-# Import routes (will be created)
-# from app.routes import health, fasi, lotti, config, gestionale
+# Import routes
+from app.routes import lotti, fasi, config, gestionale
 
 
 @asynccontextmanager
@@ -95,12 +95,11 @@ def initialize_database():
         }
 
 
-# Register API routers (will be uncommented when routes are created)
-# app.include_router(health.router, prefix="/api", tags=["Health"])
-# app.include_router(fasi.router, prefix="/api/fasi", tags=["Fasi"])
-# app.include_router(lotti.router, prefix="/api/lotti", tags=["Lotti"])
-# app.include_router(config.router, prefix="/api/config", tags=["Configuration"])
-# app.include_router(gestionale.router, prefix="/api/gestionale", tags=["Gestionale"])
+# Register API routers
+app.include_router(lotti.router, prefix="/api/lotti", tags=["Lotti"])
+app.include_router(fasi.router, prefix="/api/fasi", tags=["Fasi"])
+app.include_router(config.router, prefix="/api/config", tags=["ConfigCommessa"])
+app.include_router(gestionale.router, prefix="/api/gestionale", tags=["Gestionale"])
 
 
 if __name__ == "__main__":

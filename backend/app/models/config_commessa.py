@@ -23,8 +23,12 @@ class ConfigCommessa(Base):
     """
     __tablename__ = "ConfigCommessa"
 
-    ConfigID = Column(Integer, primary_key=True, autoincrement=True)
+    ConfigCommessaID = Column(Integer, primary_key=True, autoincrement=True)
     CommessaERPId = Column(Integer, unique=True, nullable=False)
+
+    # Articolo information
+    CodiceArticolo = Column(String(50), nullable=False)
+    Descrizione = Column(String(200), nullable=False)
 
     FlagSMD = Column(Boolean, default=True)
     FlagPTH = Column(Boolean, default=False)
@@ -35,11 +39,13 @@ class ConfigCommessa(Base):
     Revisione = Column(String(50), nullable=True)
 
     BloccataDocumentazione = Column(Boolean, default=False, index=True)
+    Attivo = Column(Boolean, default=True, index=True)
 
     Note = Column(Text, nullable=True)
     ConfigJSON = Column(Text, nullable=True)
 
     DataCreazione = Column(DateTime, default=datetime.utcnow, nullable=False)
+    DataModifica = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     ModificatoDa = Column(String(100), nullable=True)
     DataUltimaModifica = Column(DateTime, nullable=True)
 

@@ -33,12 +33,14 @@ class Lotto(Base):
 
     DataInizio = Column(DateTime, nullable=False)
     DataFine = Column(DateTime, nullable=True)
+    DataCreazione = Column(DateTime, default=datetime.utcnow, nullable=False)
+    DataModifica = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     QtaInput = Column(Integer, nullable=True)
     QtaOutput = Column(Integer, nullable=False)
     QtaScarti = Column(Integer, nullable=False, default=0)
 
-    OperatoreID = Column(Integer, ForeignKey("Utenti.UtenteID"), nullable=True)
+    UtenteID = Column(Integer, ForeignKey("Utenti.UtenteID"), nullable=True)
     MacchinaID = Column(Integer, ForeignKey("Macchine.MacchinaID"), nullable=True)
 
     ProgrammaFeeder = Column(String(100), nullable=True)
@@ -53,7 +55,7 @@ class Lotto(Base):
         UniqueConstraint("FaseID", "Progressivo", name="UQ_Lotti_Fase_Progressivo"),
         Index("IX_Lotti_Fase", "FaseID", "Progressivo"),
         Index("IX_Lotti_DataInizio", "DataInizio"),
-        Index("IX_Lotti_Operatore", "OperatoreID"),
+        Index("IX_Lotti_Utente", "UtenteID"),
     )
 
     # Relationships
