@@ -11,6 +11,8 @@ import Lotti from './pages/Lotti';
 import SMD from './pages/SMD';
 import PTH from './pages/PTH';
 import Collaudo from './pages/Collaudo';
+import Utenti from './pages/Utenti';
+import Macchine from './pages/Macchine';
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
           <Route path="smd" element={<SMD />} />
           <Route path="pth" element={<PTH />} />
           <Route path="collaudo" element={<Collaudo />} />
+          <Route path="utenti" element={<Utenti />} />
+          <Route path="macchine" element={<Macchine />} />
         </Route>
       </Routes>
     </BrowserRouter>

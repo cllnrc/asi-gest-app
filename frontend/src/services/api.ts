@@ -106,6 +106,43 @@ export interface Fase {
   Completata: boolean;
 }
 
+export interface FaseTipo {
+  FaseTipoID: number;
+  Nome: string;
+  Descrizione: string | null;
+  TipoProduzione: string; // 'SMD' | 'PTH' | 'CONTROLLI'
+  OrdineSequenza: number;
+}
+
+export interface Utente {
+  UtenteID: number;
+  Username: string;
+  NomeCompleto: string;
+  Email: string | null;
+  Reparto: string | null; // 'SMD' | 'PTH' | 'CONTROLLI'
+  Ruolo: string | null;
+  Attivo: boolean;
+  DataCreazione: string;
+}
+
+export interface Macchina {
+  MacchinaID: number;
+  Codice: string;
+  Descrizione: string | null;
+  Reparto: string | null; // 'SMD' | 'PTH' | 'CONTROLLI'
+  Tipo: string | null;
+  Note: string | null;
+  Attiva: boolean;
+  DataCreazione: string;
+}
+
+export interface LottoDettaglio extends Lotto {
+  fasi?: Fase[];
+  faseTipo?: FaseTipo;
+  utente?: Utente;
+  macchina?: Macchina;
+}
+
 // API functions - Gestionale (Read-only ASITRON)
 export const gestionaleApi = {
   getCommesse: async (aperte?: boolean, limit = 100) => {
@@ -173,9 +210,11 @@ export const lottiApi = {
 
 // API functions - Fasi (ASI_GEST database)
 export const fasiApi = {
-  getFasi: async (lottoId?: number) => {
-    const params = lottoId ? `?LottoID=${lottoId}` : '';
-    const response = await api.get<{ items: Fase[]; total: number }>(`/api/fasi${params}`);
+  getFasi: async (lottoId?: number, completate?: boolean) => {
+    const params = new URLSearchParams();
+    if (lottoId !== undefined) params.append('LottoID', lottoId.toString());
+    if (completate !== undefined) params.append('completate', completate.toString());
+    const response = await api.get<{ items: Fase[]; total: number }>(`/api/fasi?${params}`);
     return response.data;
   },
 
@@ -196,5 +235,77 @@ export const fasiApi = {
 
   deleteFase: async (id: number) => {
     await api.delete(`/api/fasi/${id}`);
+  },
+};
+
+// API functions - Fasi Tipo (ASI_GEST database)
+export const fasiTipoApi = {
+  getFasiTipo: async (tipo?: string) => {
+    const params = tipo ? `?tipo=${tipo}` : '';
+    const response = await api.get<{ items: FaseTipo[]; total: number }>(`/api/fasi-tipo${params}`);
+    return response.data;
+  },
+
+  getFaseTipo: async (id: number) => {
+    const response = await api.get<FaseTipo>(`/api/fasi-tipo/${id}`);
+    return response.data;
+  },
+};
+
+// API functions - Utenti (ASI_GEST database)
+export const utentiApi = {
+  getUtenti: async (attivi?: boolean) => {
+    const params = attivi !== undefined ? `?attivi=${attivi}` : '';
+    const response = await api.get<{ items: Utente[]; total: number }>(`/api/utenti${params}`);
+    return response.data;
+  },
+
+  getUtente: async (id: number) => {
+    const response = await api.get<Utente>(`/api/utenti/${id}`);
+    return response.data;
+  },
+
+  createUtente: async (data: Partial<Utente>) => {
+    const response = await api.post<Utente>('/api/utenti', data);
+    return response.data;
+  },
+
+  updateUtente: async (id: number, data: Partial<Utente>) => {
+    const response = await api.put<Utente>(`/api/utenti/${id}`, data);
+    return response.data;
+  },
+
+  deleteUtente: async (id: number) => {
+    await api.delete(`/api/utenti/${id}`);
+  },
+};
+
+// API functions - Macchine (ASI_GEST database)
+export const macchineApi = {
+  getMacchine: async (reparto?: string, attive?: boolean) => {
+    const params = new URLSearchParams();
+    if (reparto) params.append('reparto', reparto);
+    if (attive !== undefined) params.append('attive', attive.toString());
+    const response = await api.get<{ items: Macchina[]; total: number }>(`/api/macchine?${params}`);
+    return response.data;
+  },
+
+  getMacchina: async (id: number) => {
+    const response = await api.get<Macchina>(`/api/macchine/${id}`);
+    return response.data;
+  },
+
+  createMacchina: async (data: Partial<Macchina>) => {
+    const response = await api.post<Macchina>('/api/macchine', data);
+    return response.data;
+  },
+
+  updateMacchina: async (id: number, data: Partial<Macchina>) => {
+    const response = await api.put<Macchina>(`/api/macchine/${id}`, data);
+    return response.data;
+  },
+
+  deleteMacchina: async (id: number) => {
+    await api.delete(`/api/macchine/${id}`);
   },
 };
