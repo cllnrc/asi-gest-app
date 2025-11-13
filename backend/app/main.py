@@ -38,6 +38,7 @@ app = FastAPI(
     version=settings.APP_VERSION,
     description="Production management system for electronics assembly (SMD, PTH, testing)",
     lifespan=lifespan,
+    redirect_slashes=False,  # Disable automatic redirects that break CORS
 )
 
 # Configure CORS
