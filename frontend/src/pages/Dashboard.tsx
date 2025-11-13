@@ -41,22 +41,22 @@ export default function Dashboard() {
       const [commesseData, lottiData, fasiData] = await Promise.all([
         gestionaleApi.getCommesse(true, 500), // aperte = true
         lottiApi.getLotti(),
-        fasiApi.getFasi(undefined, true), // completate = true
+        fasiApi.getFasi(undefined, true), // completata = true (FIX: parametro corretto)
       ]);
 
       // Count commesse attive
       const commesseAttive = commesseData.total;
 
-      // Count lotti aperti
-      const lottiAperti = lottiData.items.filter((l) => l.Stato === 'APERTO').length;
+      // Count lotti aperti (DataFine === null significa aperto)
+      const lottiAperti = lottiData.items.filter((l) => l.DataFine === null).length;
 
       // Count fasi completate nelle ultime 24h
       const now = new Date();
       const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
       const fasiCompletate24h = fasiData.items.filter((f) => {
-        if (!f.DataFine) return false;
-        const dataFine = new Date(f.DataFine);
-        return dataFine >= last24h && dataFine <= now;
+        if (!f.Completata) return false; // Usa flag Completata invece di DataFine
+        const dataModifica = new Date(f.DataModifica);
+        return dataModifica >= last24h && dataModifica <= now;
       }).length;
 
       setKpi({

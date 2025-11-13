@@ -84,26 +84,30 @@ export interface Cliente {
 
 export interface Lotto {
   LottoID: number;
-  ProgressivoGiornaliero: number;
+  FaseID: number;
+  Progressivo: number;
+  UtenteID: number;
+  DataInizio: string;
+  DataFine: string | null; // null = aperto, valorizzato = chiuso
   DataCreazione: string;
-  ConfigCommessaID: number | null;
-  DataChiusura: string | null;
-  Stato: string;
-  NumeroCommessa: string | null;
-  CodiceArticolo: string | null;
+  DataModifica: string;
+  QtaInput: number | null;
+  QtaOutput: number;
+  QtaScarti: number;
+  SerialeMacchina: string | null;
+  Note: string | null;
 }
 
 export interface Fase {
   FaseID: number;
-  LottoID: number;
+  ConfigCommessaID: number;
   FaseTipoID: number;
-  MacchinaID: number | null;
-  UtenteID: number | null;
-  DataInizio: string;
-  DataFine: string | null;
-  Quantita: number | null;
+  NumeroCommessa: string;
+  Quantita: number;
   Note: string | null;
   Completata: boolean;
+  DataCreazione: string;
+  DataModifica: string;
 }
 
 export interface FaseTipo {
@@ -210,10 +214,11 @@ export const lottiApi = {
 
 // API functions - Fasi (ASI_GEST database)
 export const fasiApi = {
-  getFasi: async (lottoId?: number, completate?: boolean) => {
+  getFasi: async (lottoId?: number, completata?: boolean) => {
     const params = new URLSearchParams();
     if (lottoId !== undefined) params.append('LottoID', lottoId.toString());
-    if (completate !== undefined) params.append('completate', completate.toString());
+    // FIX: Backend usa 'completata' (senza 'e')
+    if (completata !== undefined) params.append('completata', completata.toString());
     const response = await api.get<{ items: Fase[]; total: number }>(`/api/fasi?${params}`);
     return response.data;
   },
