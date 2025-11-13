@@ -192,7 +192,7 @@ export const gestionaleApi = {
 // API functions - Lotti (ASI_GEST database)
 export const lottiApi = {
   getLotti: async () => {
-    const response = await api.get<{ items: Lotto[]; total: number }>('/api/lotti');
+    const response = await api.get<{ items: Lotto[]; total: number }>('/api/lotti/');
     return response.data;
   },
 
@@ -202,7 +202,7 @@ export const lottiApi = {
   },
 
   createLotto: async (data: { ConfigCommessaID?: number }) => {
-    const response = await api.post<Lotto>('/api/lotti', data);
+    const response = await api.post<Lotto>('/api/lotti/', data);
     return response.data;
   },
 
@@ -223,7 +223,7 @@ export const fasiApi = {
     if (lottoId !== undefined) params.append('LottoID', lottoId.toString());
     // FIX: Backend usa 'completata' (senza 'e')
     if (completata !== undefined) params.append('completata', completata.toString());
-    const response = await api.get<{ items: Fase[]; total: number }>(`/api/fasi?${params}`);
+    const response = await api.get<{ items: Fase[]; total: number }>(`/api/fasi/?${params}`);
     return response.data;
   },
 
@@ -233,7 +233,7 @@ export const fasiApi = {
   },
 
   createFase: async (data: Partial<Fase>) => {
-    const response = await api.post<Fase>('/api/fasi', data);
+    const response = await api.post<Fase>('/api/fasi/', data);
     return response.data;
   },
 
@@ -251,7 +251,7 @@ export const fasiApi = {
 export const fasiTipoApi = {
   getFasiTipo: async (tipo?: string) => {
     const params = tipo ? `?tipo=${tipo}` : '';
-    const response = await api.get<{ items: FaseTipo[]; total: number }>(`/api/fasi-tipo${params}`);
+    const response = await api.get<{ items: FaseTipo[]; total: number }>(`/api/fasi-tipo/${params}`);
     return response.data;
   },
 
@@ -265,7 +265,7 @@ export const fasiTipoApi = {
 export const utentiApi = {
   getUtenti: async (attivi?: boolean) => {
     const params = attivi !== undefined ? `?attivi=${attivi}` : '';
-    const response = await api.get<{ items: Utente[]; total: number }>(`/api/utenti${params}`);
+    const response = await api.get<{ items: Utente[]; total: number }>(`/api/utenti/${params}`);
     return response.data;
   },
 
@@ -275,7 +275,7 @@ export const utentiApi = {
   },
 
   createUtente: async (data: Partial<Utente>) => {
-    const response = await api.post<Utente>('/api/utenti', data);
+    const response = await api.post<Utente>('/api/utenti/', data);
     return response.data;
   },
 
@@ -295,7 +295,7 @@ export const macchineApi = {
     const params = new URLSearchParams();
     if (reparto) params.append('reparto', reparto);
     if (attive !== undefined) params.append('attive', attive.toString());
-    const response = await api.get<{ items: Macchina[]; total: number }>(`/api/macchine?${params}`);
+    const response = await api.get<{ items: Macchina[]; total: number }>(`/api/macchine/?${params}`);
     return response.data;
   },
 
@@ -305,7 +305,7 @@ export const macchineApi = {
   },
 
   createMacchina: async (data: Partial<Macchina>) => {
-    const response = await api.post<Macchina>('/api/macchine', data);
+    const response = await api.post<Macchina>('/api/macchine/', data);
     return response.data;
   },
 

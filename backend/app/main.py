@@ -38,7 +38,7 @@ app = FastAPI(
     version=settings.APP_VERSION,
     description="Production management system for electronics assembly (SMD, PTH, testing)",
     lifespan=lifespan,
-    redirect_slashes=False,  # Disable automatic redirects that break CORS
+    # redirect_slashes=True by default - allows /api/lotti to redirect to /api/lotti/
 )
 
 # Configure CORS
