@@ -112,7 +112,7 @@ export default function Collaudo() {
       setMacchine(macchineData.items);
 
       // Filter CONTROLLO fasi only
-      const controlloFasiTipo = fasiTipoData.items.filter((ft) => ft.Tipo === 'CONTROLLO');
+      const controlloFasiTipo = fasiTipoData.items.filter((ft) => ft.TipoProduzione === 'CONTROLLI');
       const controlloFasiTipoIds = controlloFasiTipo.map((ft) => ft.FaseTipoID);
 
       const controlloFasi = fasiData.items.filter((f) => controlloFasiTipoIds.includes(f.FaseTipoID));

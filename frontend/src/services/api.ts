@@ -112,6 +112,8 @@ export interface FaseTipo {
   Descrizione: string | null;
   TipoProduzione: string; // 'SMD' | 'PTH' | 'CONTROLLI'
   OrdineSequenza: number;
+  Attivo: boolean;
+  DataCreazione: string;
 }
 
 export interface Utente {
@@ -141,6 +143,17 @@ export interface LottoDettaglio extends Lotto {
   faseTipo?: FaseTipo;
   utente?: Utente;
   macchina?: Macchina;
+}
+
+export interface ConfigCommessa {
+  ConfigCommessaID: number;
+  CommessaERPId: number;
+  CodiceArticolo: string;
+  Descrizione: string;
+  Note: string | null;
+  Attivo: boolean;
+  DataCreazione: string;
+  DataModifica: string;
 }
 
 // API functions - Gestionale (Read-only ASITRON)
@@ -307,5 +320,33 @@ export const macchineApi = {
 
   deleteMacchina: async (id: number) => {
     await api.delete(`/api/macchine/${id}`);
+  },
+};
+
+// API functions - ConfigCommessa (ASI_GEST database)
+export const configApi = {
+  getConfigs: async (attivo?: boolean) => {
+    const params = attivo !== undefined ? `?attivo=${attivo}` : '';
+    const response = await api.get<{ items: ConfigCommessa[]; total: number }>(`/api/config${params}`);
+    return response.data;
+  },
+
+  getConfig: async (id: number) => {
+    const response = await api.get<ConfigCommessa>(`/api/config/${id}`);
+    return response.data;
+  },
+
+  createConfig: async (data: Partial<ConfigCommessa>) => {
+    const response = await api.post<ConfigCommessa>('/api/config', data);
+    return response.data;
+  },
+
+  updateConfig: async (id: number, data: Partial<ConfigCommessa>) => {
+    const response = await api.put<ConfigCommessa>(`/api/config/${id}`, data);
+    return response.data;
+  },
+
+  deleteConfig: async (id: number) => {
+    await api.delete(`/api/config/${id}`);
   },
 };

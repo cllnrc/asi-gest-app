@@ -92,7 +92,7 @@ export default function PTH() {
       setMacchine(macchineData.items);
 
       // Filter PTH fasi only
-      const pthFasiTipo = fasiTipoData.items.filter((ft) => ft.Tipo === 'PTH');
+      const pthFasiTipo = fasiTipoData.items.filter((ft) => ft.TipoProduzione === 'PTH');
       const pthFasiTipoIds = pthFasiTipo.map((ft) => ft.FaseTipoID);
 
       const pthFasi = fasiData.items.filter((f) => pthFasiTipoIds.includes(f.FaseTipoID));

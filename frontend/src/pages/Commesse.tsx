@@ -56,8 +56,8 @@ export default function Commesse() {
     // Preseleziona SMD, PTH e almeno un controllo
     const defaultFasi: Record<number, boolean> = {};
     fasiTipo.forEach((ft: FaseTipo) => {
-      if (ft.Tipo === 'SMD' || ft.Tipo === 'PTH' || ft.Tipo === 'CONTROLLO') {
-        defaultFasi[ft.FaseTipoID] = ft.Tipo !== 'CONTROLLO'; // SMD e PTH true, CONTROLLO false di default
+      if (ft.TipoProduzione === 'SMD' || ft.TipoProduzione === 'PTH' || ft.TipoProduzione === 'CONTROLLI') {
+        defaultFasi[ft.FaseTipoID] = ft.TipoProduzione !== 'CONTROLLI'; // SMD e PTH true, CONTROLLI false di default
       }
     });
     setFasiSelezionate(defaultFasi);
@@ -86,15 +86,17 @@ export default function Commesse() {
 
       // 1. Crea ConfigCommessa
       const configData = {
-        CommessaERPId: selectedCommessa.PROGRESSIVO,
         CodiceArticolo: codiceArticolo || `ART-${selectedCommessa.NUMEROCOM}`,
         Descrizione: descrizioneArticolo,
-        FlagSMD: fasiDaCreare.some((id) => fasiTipo.find((ft: FaseTipo) => ft.FaseTipoID === id)?.Tipo === 'SMD'),
-        FlagPTH: fasiDaCreare.some((id) => fasiTipo.find((ft: FaseTipo) => ft.FaseTipoID === id)?.Tipo === 'PTH'),
-        FlagControllo: fasiDaCreare.some((id) => fasiTipo.find((ft: FaseTipo) => ft.FaseTipoID === id)?.Tipo === 'CONTROLLO'),
+        Note: `Commessa ERP: ${selectedCommessa.PROGRESSIVO}`,
       };
 
       const config = await configApi.createConfig(configData);
+
+      // Aggiorna CommessaERPId dopo la creazione
+      await configApi.updateConfig(config.ConfigCommessaID, {
+        CommessaERPId: selectedCommessa.PROGRESSIVO,
+      });
 
       // 2. Crea Fasi
       const fasiPromises = fasiDaCreare.map((faseTipoId) =>
@@ -310,9 +312,9 @@ export default function Commesse() {
                       className="w-4 h-4"
                     />
                     <div>
-                      <div className="text-[11px] font-medium text-gray-800">{ft.Descrizione}</div>
+                      <div className="text-[11px] font-medium text-gray-800">{ft.Nome}</div>
                       <div className="text-[10px] text-gray-500">
-                        Tipo: {ft.Tipo} | Codice: {ft.Codice}
+                        {ft.TipoProduzione} - {ft.Descrizione}
                       </div>
                     </div>
                   </label>
