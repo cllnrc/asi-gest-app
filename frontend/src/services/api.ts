@@ -86,15 +86,17 @@ export interface Lotto {
   LottoID: number;
   FaseID: number;
   Progressivo: number;
-  UtenteID: number;
+  OperatoreID: number | null;
+  MacchinaID: number | null;
   DataInizio: string;
   DataFine: string | null; // null = aperto, valorizzato = chiuso
-  DataCreazione: string;
-  DataModifica: string;
   QtaInput: number | null;
   QtaOutput: number;
   QtaScarti: number;
-  SerialeMacchina: string | null;
+  ProgrammaFeeder: string | null;
+  TempoSetupMin: number | null;
+  TipoScarto: string | null;
+  NoteScarti: string | null;
   Note: string | null;
 }
 

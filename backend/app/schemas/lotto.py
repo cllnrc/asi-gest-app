@@ -13,14 +13,18 @@ class LottoBase(BaseModel):
     QtaInput: Optional[int] = Field(None, ge=0, description="Quantità in input")
     QtaOutput: Optional[int] = Field(None, ge=0, description="Quantità in output")
     QtaScarti: Optional[int] = Field(None, ge=0, description="Quantità scarti")
-    SerialeMacchina: Optional[str] = Field(None, max_length=100, description="Seriale macchina utilizzata")
+    ProgrammaFeeder: Optional[str] = Field(None, max_length=100, description="Programma feeder utilizzato")
+    TempoSetupMin: Optional[int] = Field(None, ge=0, description="Tempo setup in minuti")
+    TipoScarto: Optional[str] = Field(None, max_length=50, description="Tipo di scarto")
+    NoteScarti: Optional[str] = Field(None, max_length=500, description="Note sugli scarti")
     Note: Optional[str] = Field(None, description="Note operative")
 
 
 class LottoCreate(LottoBase):
     """Schema for creating a new Lotto"""
     FaseID: int = Field(..., gt=0, description="ID della fase")
-    UtenteID: int = Field(..., gt=0, description="ID dell'utente che apre il lotto")
+    OperatoreID: Optional[int] = Field(None, gt=0, description="ID dell'operatore che apre il lotto")
+    MacchinaID: Optional[int] = Field(None, gt=0, description="ID della macchina utilizzata")
 
 
 class LottoClose(BaseModel):
@@ -37,11 +41,10 @@ class LottoResponse(LottoBase):
     LottoID: int
     FaseID: int
     Progressivo: int
-    UtenteID: int
+    OperatoreID: Optional[int] = None
+    MacchinaID: Optional[int] = None
     DataInizio: datetime
     DataFine: Optional[datetime] = None
-    DataCreazione: datetime
-    DataModifica: datetime
 
 
 class LottoWithDetails(LottoResponse):
@@ -51,9 +54,13 @@ class LottoWithDetails(LottoResponse):
     FaseTipoCodice: Optional[str] = None
     FaseTipoDescrizione: Optional[str] = None
 
-    # Campi dall'utente
-    UtenteNome: Optional[str] = None
-    UtenteCognome: Optional[str] = None
+    # Campi dall'operatore
+    OperatoreNomeCompleto: Optional[str] = None
+    OperatoreUsername: Optional[str] = None
+
+    # Campi dalla macchina
+    MacchinaCodice: Optional[str] = None
+    MacchinaDescrizione: Optional[str] = None
 
     # Campi calcolati
     Resa: Optional[float] = Field(None, description="Resa percentuale (output/input)")

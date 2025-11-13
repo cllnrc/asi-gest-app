@@ -93,12 +93,12 @@ def get_lotto(
             Fase.NumeroCommessa,
             FaseTipo.Codice.label("FaseTipoCodice"),
             FaseTipo.Descrizione.label("FaseTipoDescrizione"),
-            Utente.Nome.label("UtenteNome"),
-            Utente.Cognome.label("UtenteCognome"),
+            Utente.NomeCompleto.label("OperatoreNomeCompleto"),
+            Utente.Username.label("OperatoreUsername"),
         )
         .join(Fase, Lotto.FaseID == Fase.FaseID)
         .join(FaseTipo, Fase.FaseTipoID == FaseTipo.FaseTipoID)
-        .join(Utente, Lotto.UtenteID == Utente.UtenteID)
+        .outerjoin(Utente, Lotto.OperatoreID == Utente.UtenteID)
         .where(Lotto.LottoID == lotto_id)
     )
 
@@ -107,7 +107,7 @@ def get_lotto(
     if not result:
         raise HTTPException(status_code=404, detail="Lotto not found")
 
-    lotto, num_commessa, fase_tipo_cod, fase_tipo_desc, utente_nome, utente_cognome = result
+    lotto, num_commessa, fase_tipo_cod, fase_tipo_desc, operatore_nome, operatore_username = result
 
     # Costruisci response con dettagli
     lotto_dict = LottoResponse.model_validate(lotto).model_dump()
@@ -115,8 +115,8 @@ def get_lotto(
         "FaseNumeroCommessa": num_commessa,
         "FaseTipoCodice": fase_tipo_cod,
         "FaseTipoDescrizione": fase_tipo_desc,
-        "UtenteNome": utente_nome,
-        "UtenteCognome": utente_cognome,
+        "OperatoreNomeCompleto": operatore_nome,
+        "OperatoreUsername": operatore_username,
     })
 
     # Calcola resa e durata
@@ -145,10 +145,11 @@ def create_lotto(
     if not fase:
         raise HTTPException(status_code=404, detail="Fase not found")
 
-    # Verifica che l'utente esista
-    utente = db.get(Utente, lotto_data.UtenteID)
-    if not utente:
-        raise HTTPException(status_code=404, detail="Utente not found")
+    # Verifica che l'operatore esista (se specificato)
+    if lotto_data.OperatoreID:
+        operatore = db.get(Utente, lotto_data.OperatoreID)
+        if not operatore:
+            raise HTTPException(status_code=404, detail="Operatore not found")
 
     # Calcola progressivo usando AsitronCore
     progressivo = calcola_progressivo_lotto(lotto_data.FaseID, db)
@@ -157,11 +158,15 @@ def create_lotto(
     new_lotto = Lotto(
         FaseID=lotto_data.FaseID,
         Progressivo=progressivo,
-        UtenteID=lotto_data.UtenteID,
+        OperatoreID=lotto_data.OperatoreID,
+        MacchinaID=lotto_data.MacchinaID,
         QtaInput=lotto_data.QtaInput,
-        QtaOutput=lotto_data.QtaOutput,
-        QtaScarti=lotto_data.QtaScarti,
-        SerialeMacchina=lotto_data.SerialeMacchina,
+        QtaOutput=lotto_data.QtaOutput or 0,
+        QtaScarti=lotto_data.QtaScarti or 0,
+        ProgrammaFeeder=lotto_data.ProgrammaFeeder,
+        TempoSetupMin=lotto_data.TempoSetupMin,
+        TipoScarto=lotto_data.TipoScarto,
+        NoteScarti=lotto_data.NoteScarti,
         Note=lotto_data.Note,
         DataInizio=datetime.utcnow(),
     )
