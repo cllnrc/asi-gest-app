@@ -5,10 +5,12 @@ API Routes for Gestionale (Read-only integration with ASITRON database)
 Routes for querying ASITRON production management data.
 All endpoints are read-only and do not modify the source database.
 
-Mapping (per MAPPING_GESTIONALE_REALE_ASI_GEST.md):
-- COMMESSE → AnagraficaCommesse table
+Mapping database ASITRON (allineato con ASI-TRACE):
+- COMMESSE → TESTEORDINIPROD table (751 record)
 - ARTICOLI → ANAGRAFICAARTICOLI table
 - CLIENTI → ANAGRAFICACF table
+
+Nota: AnagraficaCommesse era vuota (0 record), usare TESTEORDINIPROD invece
 """
 
 from typing import Optional
@@ -36,50 +38,55 @@ def list_commesse(
     db: Session = Depends(get_db_asitron),
 ):
     """
-    Lista commesse da ASITRON gestionale (AnagraficaCommesse).
+    Lista commesse da ASITRON gestionale (TESTEORDINIPROD).
+
+    Tabella corretta: TESTEORDINIPROD (usata anche da ASI-TRACE)
+    - 751 record totali, 37 commesse aperte (STATOCHIUSO=0)
+    - AnagraficaCommesse era vuota (0 record)
 
     Parametri:
-    - aperte: Se True, ritorna solo commesse aperte (StatoCommessa=0).
-              Se False, ritorna solo commesse chiuse (StatoCommessa!=0).
+    - aperte: Se True, ritorna solo commesse aperte (STATOCHIUSO=0).
+              Se False, ritorna solo commesse chiuse (STATOCHIUSO!=0).
               Default: True (solo aperte)
     - limit: Numero massimo di risultati (default 100, max 500)
 
     Ritorna:
     - Lista di commesse con informazioni cliente
-    - Ordinamento: AnnoCom DESC, NumCom DESC
+    - Ordinamento: ESERCIZIO DESC, NUMEROCOM DESC
     """
     # Build query using raw SQL for compatibility with ASITRON database
-    # AnagraficaCommesse columns: Progressivo (PK), AnnoCom, NumCom, Riferimento,
-    #                             CliCommitt, Oggetto, DataEmissione, DataConsegnaContr,
-    #                             StatoCommessa (0=aperta, altri=chiusa), DATAMODIFICA
+    # TESTEORDINIPROD columns: PROGRESSIVO (PK), ESERCIZIO, NUMEROCOM, RIFCOMMCLI,
+    #                          CODCLIENTE, ANNOTAZIONI, DATAEMISSIONE, DATAINIZIOPIANO,
+    #                          DATAFINEPIANO, STATOCHIUSO (0=aperta, 1=chiusa)
     # ANAGRAFICACF columns: CODCONTO, DSCCONTO1
 
     # Build WHERE clause
     where_clause = ""
     if aperte is not None:
         if aperte:
-            where_clause = "WHERE a.StatoCommessa = 0"
+            where_clause = "WHERE t.STATOCHIUSO = 0"
         else:
-            where_clause = "WHERE a.StatoCommessa != 0"
+            where_clause = "WHERE t.STATOCHIUSO != 0"
 
     # Build complete SQL query
+    # TABELLA CORRETTA: TESTEORDINIPROD (751 record) invece di AnagraficaCommesse (0 record)
     sql = text(f"""
         SELECT TOP {limit}
-            a.Progressivo,
-            a.AnnoCom,
-            a.NumCom,
-            a.Riferimento,
-            a.CliCommitt,
+            t.PROGRESSIVO,
+            t.ESERCIZIO,
+            t.NUMEROCOM,
+            t.RIFCOMMCLI,
+            t.CODCLIENTE,
             COALESCE(c.DSCCONTO1, '') as NomeCliente,
-            a.DataEmissione,
-            a.DataConsegnaContr,
-            a.DataConsegnaContr as DATAFINEPIANO,
-            a.StatoCommessa,
-            a.Oggetto
-        FROM dbo.AnagraficaCommesse a
-        LEFT JOIN dbo.ANAGRAFICACF c ON a.CliCommitt = c.CODCONTO
+            t.DATAEMISSIONE,
+            t.DATAINIZIOPIANO,
+            t.DATAFINEPIANO,
+            t.STATOCHIUSO,
+            t.ANNOTAZIONI
+        FROM dbo.TESTEORDINIPROD t
+        LEFT JOIN dbo.ANAGRAFICACF c ON t.CODCLIENTE = c.CODCONTO
         {where_clause}
-        ORDER BY a.AnnoCom DESC, a.NumCom DESC
+        ORDER BY t.ESERCIZIO DESC, t.NUMEROCOM DESC
     """)
 
     try:
@@ -128,22 +135,23 @@ def get_commessa(
 
     Nota: Per ottenere articoli associati, usare endpoint separato
     """
+    # TABELLA CORRETTA: TESTEORDINIPROD (usata da ASI-TRACE)
     sql = text("""
         SELECT
-            a.Progressivo,
-            a.AnnoCom,
-            a.NumCom,
-            a.Riferimento,
-            a.CliCommitt,
+            t.PROGRESSIVO,
+            t.ESERCIZIO,
+            t.NUMEROCOM,
+            t.RIFCOMMCLI,
+            t.CODCLIENTE,
             COALESCE(c.DSCCONTO1, '') as NomeCliente,
-            a.DataEmissione,
-            a.DataConsegnaContr,
-            a.DataConsegnaContr as DATAFINEPIANO,
-            a.StatoCommessa,
-            a.Oggetto
-        FROM dbo.AnagraficaCommesse a
-        LEFT JOIN dbo.ANAGRAFICACF c ON a.CliCommitt = c.CODCONTO
-        WHERE a.Progressivo = :progressivo
+            t.DATAEMISSIONE,
+            t.DATAINIZIOPIANO,
+            t.DATAFINEPIANO,
+            t.STATOCHIUSO,
+            t.ANNOTAZIONI
+        FROM dbo.TESTEORDINIPROD t
+        LEFT JOIN dbo.ANAGRAFICACF c ON t.CODCLIENTE = c.CODCONTO
+        WHERE t.PROGRESSIVO = :progressivo
     """)
 
     try:
