@@ -1,0 +1,113 @@
+[32mINFO[0m:     Will watch for changes in these directories: ['D:\\Asi-Gest\\asi-gest-app\\backend']
+[32mINFO[0m:     Uvicorn running on [1mhttp://0.0.0.0:8000[0m (Press CTRL+C to quit)
+[32mINFO[0m:     Started reloader process [[36m[1m5516[0m] using [36m[1mWatchFiles[0m
+[32mINFO[0m:     Started server process [[36m6412[0m]
+[32mINFO[0m:     Waiting for application startup.
+🚀 Starting ASI-GEST v1.0.0
+📊 ASI_GEST DB: 192.168.1.15/ASI_GEST
+📊 ASITRON DB: 192.168.1.15/ASITRON
+[32mINFO[0m:     Application startup complete.
+[32mINFO[0m:     127.0.0.1:61516 - "[1mGET /api/fasi?completata=true HTTP/1.1[0m" [31m404 Not Found[0m
+[32mINFO[0m:     127.0.0.1:61515 - "[1mGET /api/lotti HTTP/1.1[0m" [31m404 Not Found[0m
+[32mINFO[0m:     127.0.0.1:61515 - "[1mGET /api/fasi?completata=true HTTP/1.1[0m" [31m404 Not Found[0m
+[32mINFO[0m:     127.0.0.1:61516 - "[1mGET /api/lotti HTTP/1.1[0m" [31m404 Not Found[0m
+2025-11-13 16:34:38,853 INFO sqlalchemy.engine.Engine select @@version
+2025-11-13 16:34:38,854 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-11-13 16:34:38,855 INFO sqlalchemy.engine.Engine SELECT schema_name()
+2025-11-13 16:34:38,855 INFO sqlalchemy.engine.Engine [generated in 0.00021s] {}
+2025-11-13 16:34:38,856 INFO sqlalchemy.engine.Engine SELECT CAST('test max support' AS NVARCHAR(max))
+2025-11-13 16:34:38,857 INFO sqlalchemy.engine.Engine [generated in 0.00021s] {}
+2025-11-13 16:34:38,857 INFO sqlalchemy.engine.Engine SELECT 1 FROM fn_listextendedproperty(default, default, default, default, default, default, default)
+2025-11-13 16:34:38,857 INFO sqlalchemy.engine.Engine [generated in 0.00021s] {}
+2025-11-13 16:34:38,859 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-11-13 16:34:38,859 INFO sqlalchemy.engine.Engine
+        SELECT TOP 500
+            t.PROGRESSIVO,
+            t.ESERCIZIO,
+            t.NUMEROCOM,
+            t.RIFCOMMCLI,
+            t.CODCLIENTE,
+            COALESCE(c.DSCCONTO1, '') as NomeCliente,
+            t.DATAEMISSIONE,
+            t.DATAINIZIOPIANO,
+            t.DATAFINEPIANO,
+            t.STATOCHIUSO,
+            t.ANNOTAZIONI
+        FROM dbo.TESTEORDINIPROD t
+        LEFT JOIN dbo.ANAGRAFICACF c ON t.CODCLIENTE = c.CODCONTO
+        WHERE t.STATOCHIUSO = 0
+        ORDER BY t.ESERCIZIO DESC, t.NUMEROCOM DESC
+
+2025-11-13 16:34:38,859 INFO sqlalchemy.engine.Engine [generated in 0.00044s] {}
+[32mINFO[0m:     127.0.0.1:61514 - "[1mGET /api/gestionale/commesse?aperte=true&limit=500 HTTP/1.1[0m" [32m200 OK[0m
+2025-11-13 16:34:38,864 INFO sqlalchemy.engine.Engine ROLLBACK
+2025-11-13 16:34:38,867 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-11-13 16:34:38,867 INFO sqlalchemy.engine.Engine
+        SELECT TOP 500
+            t.PROGRESSIVO,
+            t.ESERCIZIO,
+            t.NUMEROCOM,
+            t.RIFCOMMCLI,
+            t.CODCLIENTE,
+            COALESCE(c.DSCCONTO1, '') as NomeCliente,
+            t.DATAEMISSIONE,
+            t.DATAINIZIOPIANO,
+            t.DATAFINEPIANO,
+            t.STATOCHIUSO,
+            t.ANNOTAZIONI
+        FROM dbo.TESTEORDINIPROD t
+        LEFT JOIN dbo.ANAGRAFICACF c ON t.CODCLIENTE = c.CODCONTO
+        WHERE t.STATOCHIUSO = 0
+        ORDER BY t.ESERCIZIO DESC, t.NUMEROCOM DESC
+
+2025-11-13 16:34:38,868 INFO sqlalchemy.engine.Engine [cached since 0.009196s ago] {}
+[32mINFO[0m:     127.0.0.1:61516 - "[1mGET /api/gestionale/commesse?aperte=true&limit=500 HTTP/1.1[0m" [32m200 OK[0m
+2025-11-13 16:34:38,872 INFO sqlalchemy.engine.Engine ROLLBACK
+[32mINFO[0m:     127.0.0.1:61530 - "[1mGET /api/lotti HTTP/1.1[0m" [31m404 Not Found[0m
+2025-11-13 16:35:09,298 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-11-13 16:35:09,302 INFO sqlalchemy.engine.Engine
+        SELECT TOP 500
+            t.PROGRESSIVO,
+            t.ESERCIZIO,
+            t.NUMEROCOM,
+            t.RIFCOMMCLI,
+            t.CODCLIENTE,
+            COALESCE(c.DSCCONTO1, '') as NomeCliente,
+            t.DATAEMISSIONE,
+            t.DATAINIZIOPIANO,
+            t.DATAFINEPIANO,
+            t.STATOCHIUSO,
+            t.ANNOTAZIONI
+        FROM dbo.TESTEORDINIPROD t
+        LEFT JOIN dbo.ANAGRAFICACF c ON t.CODCLIENTE = c.CODCONTO
+        WHERE t.STATOCHIUSO = 0
+        ORDER BY t.ESERCIZIO DESC, t.NUMEROCOM DESC
+
+2025-11-13 16:35:09,303 INFO sqlalchemy.engine.Engine [cached since 30.44s ago] {}
+[32mINFO[0m:     127.0.0.1:61531 - "[1mGET /api/fasi?completata=true HTTP/1.1[0m" [31m404 Not Found[0m
+[32mINFO[0m:     127.0.0.1:61529 - "[1mGET /api/gestionale/commesse?aperte=true&limit=500 HTTP/1.1[0m" [32m200 OK[0m
+2025-11-13 16:35:09,306 INFO sqlalchemy.engine.Engine ROLLBACK
+2025-11-13 16:35:38,996 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-11-13 16:35:38,999 INFO sqlalchemy.engine.Engine
+        SELECT TOP 500
+            t.PROGRESSIVO,
+            t.ESERCIZIO,
+            t.NUMEROCOM,
+            t.RIFCOMMCLI,
+            t.CODCLIENTE,
+            COALESCE(c.DSCCONTO1, '') as NomeCliente,
+            t.DATAEMISSIONE,
+            t.DATAINIZIOPIANO,
+            t.DATAFINEPIANO,
+            t.STATOCHIUSO,
+            t.ANNOTAZIONI
+        FROM dbo.TESTEORDINIPROD t
+        LEFT JOIN dbo.ANAGRAFICACF c ON t.CODCLIENTE = c.CODCONTO
+        WHERE t.STATOCHIUSO = 0
+        ORDER BY t.ESERCIZIO DESC, t.NUMEROCOM DESC
+
+2025-11-13 16:35:39,000 INFO sqlalchemy.engine.Engine [cached since 60.14s ago] {}
+[32mINFO[0m:     127.0.0.1:61532 - "[1mGET /api/gestionale/commesse?aperte=true&limit=500 HTTP/1.1[0m" [32m200 OK[0m
+2025-11-13 16:35:39,004 INFO sqlalchemy.engine.Engine ROLLBACK
+[32mINFO[0m:     127.0.0.1:61532 - "[1mGET /api/lotti HTTP/1.1[0m" [31m404 Not Found[0m
+[32mINFO[0m:     127.0.0.1:61532 - "[1mGET /api/fasi?completata=true HTTP/1.1[0m" [31m404 Not Found[0m
