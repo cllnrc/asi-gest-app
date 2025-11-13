@@ -19,6 +19,13 @@ from .fase import (
     FaseWithDetails,
     FaseList,
 )
+from .fase_tipo import (
+    FaseTipoBase,
+    FaseTipoCreate,
+    FaseTipoUpdate,
+    FaseTipoResponse,
+    FaseTipoList,
+)
 from .config_commessa import (
     ConfigCommessaBase,
     ConfigCommessaCreate,
@@ -52,6 +59,12 @@ __all__ = [
     "FaseResponse",
     "FaseWithDetails",
     "FaseList",
+    # FaseTipo
+    "FaseTipoBase",
+    "FaseTipoCreate",
+    "FaseTipoUpdate",
+    "FaseTipoResponse",
+    "FaseTipoList",
     # ConfigCommessa
     "ConfigCommessaBase",
     "ConfigCommessaCreate",

@@ -13,7 +13,7 @@ from app.core.config import settings
 from app.core.database import init_db_asi_gest
 
 # Import routes
-from app.routes import lotti, fasi, config, gestionale, anagrafiche
+from app.routes import lotti, fasi, fasi_tipo, config, gestionale, anagrafiche
 
 
 @asynccontextmanager
@@ -98,6 +98,7 @@ def initialize_database():
 # Register API routers
 app.include_router(lotti.router, prefix="/api/lotti", tags=["Lotti"])
 app.include_router(fasi.router, prefix="/api/fasi", tags=["Fasi"])
+app.include_router(fasi_tipo.router, prefix="/api/fasi-tipo", tags=["FasiTipo"])
 app.include_router(config.router, prefix="/api/config", tags=["ConfigCommessa"])
 app.include_router(gestionale.router, prefix="/api/gestionale", tags=["Gestionale"])
 app.include_router(anagrafiche.router, prefix="/api", tags=["Anagrafiche"])
