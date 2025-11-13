@@ -13,6 +13,7 @@ import PTH from './pages/PTH';
 import Collaudo from './pages/Collaudo';
 import Utenti from './pages/Utenti';
 import Macchine from './pages/Macchine';
+import Reporting from './pages/Reporting';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="smd" element={<SMD />} />
           <Route path="pth" element={<PTH />} />
           <Route path="collaudo" element={<Collaudo />} />
+          <Route path="reporting" element={<Reporting />} />
           <Route path="utenti" element={<Utenti />} />
           <Route path="macchine" element={<Macchine />} />
         </Route>

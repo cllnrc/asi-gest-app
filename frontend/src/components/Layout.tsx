@@ -15,6 +15,7 @@ export default function Layout() {
     { path: '/smd', label: 'SMD' },
     { path: '/pth', label: 'PTH' },
     { path: '/collaudo', label: 'Collaudo' },
+    { path: '/reporting', label: 'Report' },
     { path: '/utenti', label: 'Utenti' },
     { path: '/macchine', label: 'Macchine' },
   ];
