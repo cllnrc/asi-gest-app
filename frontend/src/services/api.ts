@@ -251,7 +251,7 @@ export const fasiApi = {
 export const fasiTipoApi = {
   getFasiTipo: async (tipo?: string) => {
     const params = tipo ? `?tipo=${tipo}` : '';
-    const response = await api.get<{ items: FaseTipo[]; total: number }>(`/api/fasi-tipo/${params}`);
+    const response = await api.get<{ items: FaseTipo[]; total: number }>(`/api/fasi-tipo${params}`);
     return response.data;
   },
 
@@ -265,7 +265,7 @@ export const fasiTipoApi = {
 export const utentiApi = {
   getUtenti: async (attivi?: boolean) => {
     const params = attivi !== undefined ? `?attivi=${attivi}` : '';
-    const response = await api.get<{ items: Utente[]; total: number }>(`/api/utenti/${params}`);
+    const response = await api.get<{ items: Utente[]; total: number }>(`/api/utenti${params}`);
     return response.data;
   },
 
@@ -295,7 +295,8 @@ export const macchineApi = {
     const params = new URLSearchParams();
     if (reparto) params.append('reparto', reparto);
     if (attive !== undefined) params.append('attive', attive.toString());
-    const response = await api.get<{ items: Macchina[]; total: number }>(`/api/macchine/?${params}`);
+    const paramsStr = params.toString();
+    const response = await api.get<{ items: Macchina[]; total: number }>(`/api/macchine${paramsStr ? '?' + paramsStr : ''}`);
     return response.data;
   },
 
@@ -305,7 +306,7 @@ export const macchineApi = {
   },
 
   createMacchina: async (data: Partial<Macchina>) => {
-    const response = await api.post<Macchina>('/api/macchine/', data);
+    const response = await api.post<Macchina>('/api/macchine', data);
     return response.data;
   },
 
