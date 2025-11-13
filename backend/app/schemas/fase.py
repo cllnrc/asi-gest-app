@@ -52,10 +52,6 @@ class FaseWithDetails(FaseResponse):
     FaseTipoDescrizione: Optional[str] = None
     FaseTipoTipo: Optional[str] = None
 
-    # Campi dalla ConfigCommessa
-    ConfigCommessaArticolo: Optional[str] = None
-    ConfigCommessaDescrizione: Optional[str] = None
-
     # Statistiche dai lotti
     NumeroLotti: int = 0
     QuantitaProdotta: int = 0

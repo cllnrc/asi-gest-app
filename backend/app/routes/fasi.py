@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, func
 
 from app.core.database import get_db_asi_gest
-from app.models import Fase, FaseTipo, ConfigCommessa, Lotto
+from app.models import Fase, FaseTipo, Lotto
 from app.schemas import (
     FaseCreate,
     FaseUpdate,
@@ -24,7 +24,7 @@ router = APIRouter()
 
 @router.get("/", response_model=FaseList)
 def list_fasi(
-    config_commessa_id: Optional[int] = Query(None, description="Filtra per ConfigCommessaID"),
+    commessa_erp_id: Optional[int] = Query(None, description="Filtra per CommessaERPId"),
     completata: Optional[bool] = Query(None, description="Filtra per fasi completate"),
     page: int = Query(1, ge=1, description="Numero pagina"),
     page_size: int = Query(50, ge=1, le=100, description="Elementi per pagina"),
@@ -34,7 +34,7 @@ def list_fasi(
     Lista tutte le fasi con paginazione e filtri.
 
     Parametri:
-    - config_commessa_id: Filtra per ConfigCommessaID (per trovare tutte le fasi di una commessa)
+    - commessa_erp_id: Filtra per CommessaERPId (ID commessa ASITRON)
     - completata: Filtra per fasi completate (True) o non completate (False)
     - page: Numero di pagina (default 1)
     - page_size: Elementi per pagina (default 50, max 100)
@@ -42,13 +42,8 @@ def list_fasi(
     # Build query
     stmt = select(Fase)
 
-    if config_commessa_id:
-        # Find ConfigCommessa to get its CommessaERPId
-        config = db.get(ConfigCommessa, config_commessa_id)
-        if not config:
-            raise HTTPException(status_code=404, detail="ConfigCommessa not found")
-        # Use CommessaERPId to filter fasi
-        stmt = stmt.where(Fase.CommessaERPId == config.CommessaERPId)
+    if commessa_erp_id:
+        stmt = stmt.where(Fase.CommessaERPId == commessa_erp_id)
 
     if completata is not None:
         stmt = stmt.where(Fase.Stato == ("CHIUSA" if completata else "APERTA"))
@@ -83,7 +78,6 @@ def get_fase(
 
     Include:
     - FaseTipo: tipo di fase (SMD, PTH, CONTROLLO, etc.)
-    - ConfigCommessa: configurazione tecnica della commessa
     - Statistiche dai lotti (numero, quantità prodotta, scarti)
     """
     # Query con join per recuperare dettagli
@@ -93,14 +87,8 @@ def get_fase(
             FaseTipo.Codice.label("FaseTipoCodice"),
             FaseTipo.Descrizione.label("FaseTipoDescrizione"),
             FaseTipo.Tipo.label("FaseTipoTipo"),
-            ConfigCommessa.CodiceArticolo.label("ConfigCommessaArticolo"),
-            ConfigCommessa.Descrizione.label("ConfigCommessaDescrizione"),
         )
         .join(FaseTipo, Fase.FaseTipoID == FaseTipo.FaseTipoID)
-        .join(
-            ConfigCommessa,
-            Fase.CommessaERPId == ConfigCommessa.CommessaERPId,
-        )
         .where(Fase.FaseID == fase_id)
     )
 
@@ -109,14 +97,7 @@ def get_fase(
     if not result:
         raise HTTPException(status_code=404, detail="Fase not found")
 
-    (
-        fase,
-        fase_tipo_cod,
-        fase_tipo_desc,
-        fase_tipo_tipo,
-        config_articolo,
-        config_desc,
-    ) = result
+    fase, fase_tipo_cod, fase_tipo_desc, fase_tipo_tipo = result
 
     # Get lotto statistics
     lotti_stmt = select(
@@ -133,8 +114,6 @@ def get_fase(
         "FaseTipoCodice": fase_tipo_cod,
         "FaseTipoDescrizione": fase_tipo_desc,
         "FaseTipoTipo": fase_tipo_tipo,
-        "ConfigCommessaArticolo": config_articolo,
-        "ConfigCommessaDescrizione": config_desc,
         "NumeroLotti": lotti_stats.count if lotti_stats else 0,
         "QuantitaProdotta": int(lotti_stats.qty_prodotta) if lotti_stats else 0,
         "QuantitaScarti": int(lotti_stats.qty_scarti) if lotti_stats else 0,
@@ -152,18 +131,13 @@ def create_fase(
     Crea una nuova fase.
 
     Parametri obbligatori:
-    - ConfigCommessaID: ID della configurazione commessa
+    - CommessaERPId: ID commessa ASITRON
     - FaseTipoID: ID del tipo di fase (SMD, PTH, CONTROLLO, etc.)
-    - NumeroCommessa: Numero commessa cliente
-    - Quantita: Quantità da produrre
+    - QtaPrevista: Quantità prevista da produrre
+    - Stato: Stato iniziale (default: APERTA)
 
-    La fase viene creata con stato "APERTA".
+    La fase viene creata con stato "APERTA" se non specificato.
     """
-    # Verifica che il ConfigCommessa esista
-    config = db.get(ConfigCommessa, fase_data.ConfigCommessaID)
-    if not config:
-        raise HTTPException(status_code=404, detail="ConfigCommessa not found")
-
     # Verifica che il FaseTipo esista
     fase_tipo = db.get(FaseTipo, fase_data.FaseTipoID)
     if not fase_tipo:
@@ -171,16 +145,13 @@ def create_fase(
 
     # Crea nuova fase
     new_fase = Fase(
-        CommessaERPId=config.CommessaERPId,
-        ConfigCommessaID=fase_data.ConfigCommessaID,
+        CommessaERPId=fase_data.CommessaERPId,
         FaseTipoID=fase_data.FaseTipoID,
-        NumeroCommessa=fase_data.NumeroCommessa,
-        Stato="APERTA",
-        DataCreazione=datetime.utcnow(),
-        DataModifica=datetime.utcnow(),
+        Stato=fase_data.Stato or "APERTA",
         DataApertura=datetime.utcnow(),
-        Quantita=fase_data.Quantita,
-        QtaPrevista=fase_data.Quantita,
+        QtaPrevista=fase_data.QtaPrevista,
+        QtaProdotta=fase_data.QtaProdotta or 0,
+        QtaResidua=fase_data.QtaResidua or fase_data.QtaPrevista,
         Note=fase_data.Note,
     )
 
