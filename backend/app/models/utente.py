@@ -33,7 +33,7 @@ class Utente(Base):
     DataCreazione = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     # Relationships
-    lotti = relationship("Lotto", back_populates="utente")
+    lotti = relationship("Lotto", back_populates="operatore")
 
     def __repr__(self):
         return f"<Utente(id={self.UtenteID}, username='{self.Username}', reparto='{self.Reparto}')>"

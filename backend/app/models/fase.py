@@ -26,33 +26,28 @@ class Fase(Base):
 
     FaseID = Column(Integer, primary_key=True, autoincrement=True)
     CommessaERPId = Column(Integer, nullable=False, index=True)
-    ConfigCommessaID = Column(Integer, ForeignKey("ConfigCommessa.ConfigCommessaID"), nullable=True)
     FaseTipoID = Column(Integer, ForeignKey("FaseTipo.FaseTipoID"), nullable=False)
 
-    __table_args__ = (
-        Index("IX_Fasi_Commessa", "CommessaERPId", "FaseTipoID"),
-    )
-
-    NumeroCommessa = Column(String(50), nullable=True)
     Stato = Column(String(20), nullable=False, default="APERTA", index=True)
     # Valori: APERTA, IN_CORSO, CHIUSA, BLOCCATA
 
-    DataCreazione = Column(DateTime, default=datetime.utcnow, nullable=False)
-    DataModifica = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-    DataApertura = Column(DateTime, default=datetime.utcnow, nullable=False)
+    DataApertura = Column(DateTime, nullable=False)
     DataChiusura = Column(DateTime, nullable=True)
 
-    Quantita = Column(Integer, nullable=True)
     QtaPrevista = Column(Integer, nullable=True)
     QtaProdotta = Column(Integer, nullable=True)
     QtaResidua = Column(Integer, nullable=True)
 
     Note = Column(Text, nullable=True)
 
+    __table_args__ = (
+        Index("IX_Fasi_Commessa", "CommessaERPId", "FaseTipoID"),
+        Index("IX_Fasi_Stato", "Stato"),
+    )
+
     # Relationships
     fase_tipo = relationship("FaseTipo", back_populates="fasi")
     lotti = relationship("Lotto", back_populates="fase", cascade="all, delete-orphan")
-    config_commessa = relationship("ConfigCommessa")
 
     @property
     def Completata(self):

@@ -102,14 +102,16 @@ export interface Lotto {
 
 export interface Fase {
   FaseID: number;
-  ConfigCommessaID: number;
+  CommessaERPId: number;
   FaseTipoID: number;
-  NumeroCommessa: string;
-  Quantita: number;
+  Stato: string; // 'APERTA' | 'IN_CORSO' | 'CHIUSA' | 'BLOCCATA'
+  DataApertura: string;
+  DataChiusura: string | null;
+  QtaPrevista: number | null;
+  QtaProdotta: number | null;
+  QtaResidua: number | null;
   Note: string | null;
-  Completata: boolean;
-  DataCreazione: string;
-  DataModifica: string;
+  Completata: boolean; // Computed from Stato
 }
 
 export interface FaseTipo {

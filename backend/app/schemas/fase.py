@@ -10,22 +10,26 @@ from pydantic import BaseModel, Field, ConfigDict
 
 class FaseBase(BaseModel):
     """Base schema for Fase"""
-    NumeroCommessa: str = Field(..., max_length=50, description="Numero commessa cliente")
-    Quantita: int = Field(..., gt=0, description="Quantità da produrre")
+    QtaPrevista: Optional[int] = Field(None, ge=0, description="Quantità prevista da produrre")
+    QtaProdotta: Optional[int] = Field(None, ge=0, description="Quantità prodotta")
+    QtaResidua: Optional[int] = Field(None, ge=0, description="Quantità residua")
     Note: Optional[str] = Field(None, description="Note sulla fase")
 
 
 class FaseCreate(FaseBase):
     """Schema for creating a new Fase"""
-    ConfigCommessaID: int = Field(..., gt=0, description="ID configurazione commessa")
+    CommessaERPId: int = Field(..., gt=0, description="ID commessa ERP")
     FaseTipoID: int = Field(..., gt=0, description="ID tipo fase")
+    Stato: str = Field("APERTA", description="Stato fase (APERTA, IN_CORSO, CHIUSA, BLOCCATA)")
 
 
 class FaseUpdate(BaseModel):
     """Schema for updating a Fase"""
-    Quantita: Optional[int] = Field(None, gt=0)
+    Stato: Optional[str] = Field(None, description="Stato fase")
+    QtaPrevista: Optional[int] = Field(None, ge=0)
+    QtaProdotta: Optional[int] = Field(None, ge=0)
+    QtaResidua: Optional[int] = Field(None, ge=0)
     Note: Optional[str] = None
-    Completata: Optional[bool] = None
 
 
 class FaseResponse(FaseBase):
@@ -33,11 +37,12 @@ class FaseResponse(FaseBase):
     model_config = ConfigDict(from_attributes=True)
 
     FaseID: int
-    ConfigCommessaID: int
+    CommessaERPId: int
     FaseTipoID: int
-    Completata: bool
-    DataCreazione: datetime
-    DataModifica: datetime
+    Stato: str
+    DataApertura: datetime
+    DataChiusura: Optional[datetime] = None
+    Completata: bool  # Computed property from Stato
 
 
 class FaseWithDetails(FaseResponse):
