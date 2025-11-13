@@ -29,14 +29,10 @@ class CommessaGestionale(BaseModel):
 
 
 class ArticoloGestionale(BaseModel):
-    """Schema for Articolo from ASITRON gestionale"""
-    PROGRESSIVO: int
+    """Schema for Articolo from ASITRON gestionale (ANAGRAFICAARTICOLI)"""
     CODICE: str
     DESCRIZIONE: Optional[str] = None
-    UNIMIS: Optional[str] = None
-    TIPOLOGIA: Optional[str] = None
-    CODFORPREF: Optional[str] = None
-    DATAFINEVALIDITA: Optional[date] = None
+    TIPOLOGIA: Optional[str] = None  # Maps to ARTTIPOLOGIA
 
 
 class ClienteGestionale(BaseModel):

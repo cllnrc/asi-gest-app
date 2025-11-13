@@ -54,8 +54,15 @@ def list_commesse(
     #                          DATAFINEPIANO, ANNOTAZIONI
     # ANAGRAFICACF columns: CODCONTO, DSCCONTO1
 
-    sql = text("""
-        SELECT
+    # Build WHERE clause
+    where_clause = ""
+    if aperte is not None:
+        stato_value = 0 if aperte else 1
+        where_clause = f"WHERE t.STATOCHIUSO = {stato_value}"
+
+    # Build complete SQL query
+    sql = text(f"""
+        SELECT TOP {limit}
             t.PROGRESSIVO,
             t.ESERCIZIO,
             t.NUMEROCOM,
@@ -69,14 +76,9 @@ def list_commesse(
             t.ANNOTAZIONI
         FROM dbo.TESTEORDINIPROD t
         LEFT JOIN dbo.ANAGRAFICACF c ON t.CODCLIENTE = c.CODCONTO
+        {where_clause}
+        ORDER BY t.ESERCIZIO DESC, t.NUMEROCOM DESC
     """)
-
-    if aperte is not None:
-        stato_value = 0 if aperte else 1
-        sql = sql.where(text(f"t.STATOCHIUSO = {stato_value}"))
-
-    sql = sql.order_by(text("t.ESERCIZIO DESC, t.NUMEROCOM DESC"))
-    sql = sql.limit(limit)
 
     try:
         result = db.execute(sql)
@@ -189,44 +191,35 @@ def list_articoli(
     Ritorna:
     - Lista articoli con codice, descrizione, unità di misura, tipologia
     """
-    sql = text("""
-        SELECT
-            PROGRESSIVO,
+    # Build WHERE clause for search
+    where_clause = ""
+    params = {}
+    if search:
+        where_clause = "AND CODICE LIKE :search"
+        params["search"] = f"%{search}%"
+
+    # Build complete SQL query
+    sql = text(f"""
+        SELECT TOP {limit}
             CODICE,
             DESCRIZIONE,
-            UNIMIS,
-            TIPOLOGIA,
-            CODFORPREF,
-            DATAFINEVALIDITA
+            CAST(ARTTIPOLOGIA AS VARCHAR(10)) as ARTTIPOLOGIA
         FROM dbo.ANAGRAFICAARTICOLI
         WHERE 1=1
+        {where_clause}
+        ORDER BY CODICE ASC
     """)
 
-    if search:
-        # Use parameterized query for safety
-        sql = sql.where(text("CODICE LIKE :search"))
-
-    sql = sql.order_by(text("CODICE ASC"))
-    sql = sql.limit(limit)
-
     try:
-        params = {}
-        if search:
-            params["search"] = f"%{search}%"
-
         result = db.execute(sql, params)
         rows = result.fetchall()
 
         articoli = []
         for row in rows:
             articolo = ArticoloGestionale(
-                PROGRESSIVO=row[0],
-                CODICE=row[1],
-                DESCRIZIONE=row[2],
-                UNIMIS=row[3],
-                TIPOLOGIA=row[4],
-                CODFORPREF=row[5],
-                DATAFINEVALIDITA=row[6],
+                CODICE=row[0],
+                DESCRIZIONE=row[1],
+                TIPOLOGIA=row[2],
             )
             articoli.append(articolo)
 
@@ -254,32 +247,32 @@ def list_clienti(
     Ritorna:
     - Lista clienti con codice, denominazione, indirizzo, contatti
     """
-    sql = text("""
-        SELECT
+    # Build WHERE clause for search
+    where_clause = ""
+    params = {}
+    if search:
+        where_clause = "AND DSCCONTO1 LIKE :search"
+        params["search"] = f"%{search}%"
+
+    # Build complete SQL query
+    sql = text(f"""
+        SELECT TOP {limit}
             CODCONTO,
             DSCCONTO1,
             DSCCONTO2,
-            PIVA,
+            PARTITAIVA,
             CODFISCALE,
             INDIRIZZO,
-            CITTA,
+            LOCALITA,
             PROVINCIA,
             CAP
         FROM dbo.ANAGRAFICACF
         WHERE 1=1
+        {where_clause}
+        ORDER BY DSCCONTO1 ASC
     """)
 
-    if search:
-        sql = sql.where(text("DSCCONTO1 LIKE :search"))
-
-    sql = sql.order_by(text("DSCCONTO1 ASC"))
-    sql = sql.limit(limit)
-
     try:
-        params = {}
-        if search:
-            params["search"] = f"%{search}%"
-
         result = db.execute(sql, params)
         rows = result.fetchall()
 
@@ -289,10 +282,10 @@ def list_clienti(
                 CODCONTO=row[0],
                 DSCCONTO1=row[1],
                 DSCCONTO2=row[2],
-                PIVA=row[3],
+                PIVA=row[3],  # PARTITAIVA from DB
                 CODFISCALE=row[4],
                 INDIRIZZO=row[5],
-                CITTA=row[6],
+                CITTA=row[6],  # LOCALITA from DB
                 PROVINCIA=row[7],
                 CAP=row[8],
             )
