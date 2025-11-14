@@ -10,7 +10,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, func
 
 from app.core.database import get_db_asi_gest
-from app.models import ConfigCommessa, Fase
+from app.models.config_commessa import ConfigCommessa
+from app.models.fase import Fase
 from app.schemas import (
     ConfigCommessaCreate,
     ConfigCommessaUpdate,

@@ -10,7 +10,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, func
 
 from app.core.database import get_db_asi_gest
-from app.models import Lotto, Fase, Utente, FaseTipo
+from app.models.lotto import Lotto
+from app.models.fase import Fase
+from app.models.utente import Utente
+from app.models.fase_tipo import FaseTipo
 from app.schemas import (
     LottoCreate,
     LottoClose,
