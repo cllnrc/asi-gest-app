@@ -116,10 +116,10 @@ export interface Fase {
 
 export interface FaseTipo {
   FaseTipoID: number;
-  Nome: string;
-  Descrizione: string | null;
-  TipoProduzione: string; // 'SMD' | 'PTH' | 'CONTROLLI'
-  OrdineSequenza: number;
+  Codice: string;
+  Descrizione: string;
+  Ordine: number;
+  Attivo: boolean;
 }
 
 export interface Utente {
@@ -249,9 +249,8 @@ export const fasiApi = {
 
 // API functions - Fasi Tipo (ASI_GEST database)
 export const fasiTipoApi = {
-  getFasiTipo: async (tipo?: string) => {
-    const params = tipo ? `?tipo=${tipo}` : '';
-    const response = await api.get<{ items: FaseTipo[]; total: number }>(`/api/fasi-tipo${params}`);
+  getFasiTipo: async () => {
+    const response = await api.get<{ items: FaseTipo[]; total: number }>('/api/fasi-tipo');
     return response.data;
   },
 

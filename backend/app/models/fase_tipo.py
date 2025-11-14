@@ -5,9 +5,8 @@ ASI-GEST Models: FaseTipo
 Definizione tipi di fasi produttive (SMD, PTH, Controllo, ecc.)
 """
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import relationship
-from datetime import datetime
 
 from app.core.database import Base
 
@@ -26,28 +25,13 @@ class FaseTipo(Base):
     __tablename__ = "FaseTipo"
 
     FaseTipoID = Column(Integer, primary_key=True, autoincrement=True)
-    Codice = Column(String(20), unique=True, nullable=False, index=True)
+    Codice = Column(String(50), nullable=False, index=True)
     Descrizione = Column(String(100), nullable=False)
-
-    # Tipo fase: "SMD", "PTH", "CONTROLLO", "ALTRO"
-    Tipo = Column(String(20), nullable=False, index=True)
-
-    # Flags comportamentali
-    RichiedeSeriale = Column(Boolean, default=False)  # Es: True per SMD, PTH
-    RichiedeControllo = Column(Boolean, default=False)  # Es: True per CTRL_*
-
-    # Ordine visualizzazione
-    OrdineVisualizzazione = Column(Integer, default=0)
-
-    # Stato
+    Ordine = Column(Integer, default=0)
     Attivo = Column(Boolean, default=True, index=True)
-
-    # Timestamp
-    DataCreazione = Column(DateTime, default=datetime.utcnow, nullable=False)
-    DataModifica = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     fasi = relationship("Fase", back_populates="fase_tipo")
 
     def __repr__(self):
-        return f"<FaseTipo(id={self.FaseTipoID}, codice='{self.Codice}', tipo='{self.Tipo}')>"
+        return f"<FaseTipo(id={self.FaseTipoID}, codice='{self.Codice}')>"

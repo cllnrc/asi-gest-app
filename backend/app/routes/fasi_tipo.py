@@ -26,7 +26,6 @@ router = APIRouter()
 def list_fasi_tipo(
     page: int = Query(1, ge=1, description="Numero pagina"),
     page_size: int = Query(50, ge=1, le=100, description="Elementi per pagina"),
-    tipo: Optional[str] = Query(None, description="Filtra per tipo (SMD, PTH, CONTROLLO, ALTRO)"),
     attivo: Optional[bool] = Query(None, description="Filtra per stato attivo"),
     db: Session = Depends(get_db_asi_gest),
 ):
@@ -36,7 +35,6 @@ def list_fasi_tipo(
     Parametri:
     - page: Numero pagina (default 1)
     - page_size: Elementi per pagina (default 50, max 100)
-    - tipo: Filtra per tipo fase (SMD, PTH, CONTROLLO, ALTRO) (opzionale)
     - attivo: Filtra per stato attivo (True/False, opzionale)
 
     Ritorna:
@@ -46,21 +44,17 @@ def list_fasi_tipo(
     stmt = select(FaseTipo)
 
     # Apply filters
-    if tipo is not None:
-        stmt = stmt.where(FaseTipo.Tipo == tipo)
     if attivo is not None:
         stmt = stmt.where(FaseTipo.Attivo == attivo)
 
     # Count total - build separate count query with same filters
     count_stmt = select(func.count(FaseTipo.FaseTipoID))
-    if tipo is not None:
-        count_stmt = count_stmt.where(FaseTipo.Tipo == tipo)
     if attivo is not None:
         count_stmt = count_stmt.where(FaseTipo.Attivo == attivo)
     total = db.execute(count_stmt).scalar()
 
     # Apply pagination and ordering
-    stmt = stmt.order_by(FaseTipo.OrdineVisualizzazione, FaseTipo.Codice)
+    stmt = stmt.order_by(FaseTipo.Ordine, FaseTipo.Codice)
     stmt = stmt.offset((page - 1) * page_size).limit(page_size)
 
     # Execute query
