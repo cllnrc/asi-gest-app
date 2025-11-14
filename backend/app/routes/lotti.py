@@ -61,8 +61,15 @@ def list_lotti(
         else:
             stmt = stmt.where(Lotto.DataFine.isnot(None))
 
-    # Count total
-    count_stmt = select(func.count()).select_from(stmt.subquery())
+    # Count total - build separate count query with same filters
+    count_stmt = select(func.count(Lotto.LottoID))
+    if fase_id:
+        count_stmt = count_stmt.where(Lotto.FaseID == fase_id)
+    if aperto is not None:
+        if aperto:
+            count_stmt = count_stmt.where(Lotto.DataFine.is_(None))
+        else:
+            count_stmt = count_stmt.where(Lotto.DataFine.isnot(None))
     total = db.execute(count_stmt).scalar()
 
     # Apply pagination

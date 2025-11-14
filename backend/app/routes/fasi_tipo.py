@@ -51,8 +51,12 @@ def list_fasi_tipo(
     if attivo is not None:
         stmt = stmt.where(FaseTipo.Attivo == attivo)
 
-    # Count total
-    count_stmt = select(func.count()).select_from(stmt.subquery())
+    # Count total - build separate count query with same filters
+    count_stmt = select(func.count(FaseTipo.FaseTipoID))
+    if tipo is not None:
+        count_stmt = count_stmt.where(FaseTipo.Tipo == tipo)
+    if attivo is not None:
+        count_stmt = count_stmt.where(FaseTipo.Attivo == attivo)
     total = db.execute(count_stmt).scalar()
 
     # Apply pagination and ordering

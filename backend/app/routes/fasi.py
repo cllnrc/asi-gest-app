@@ -50,8 +50,12 @@ def list_fasi(
     if completata is not None:
         stmt = stmt.where(Fase.Stato == ("CHIUSA" if completata else "APERTA"))
 
-    # Count total
-    count_stmt = select(func.count()).select_from(stmt.subquery())
+    # Count total - build separate count query with same filters
+    count_stmt = select(func.count(Fase.FaseID))
+    if commessa_erp_id:
+        count_stmt = count_stmt.where(Fase.CommessaERPId == commessa_erp_id)
+    if completata is not None:
+        count_stmt = count_stmt.where(Fase.Stato == ("CHIUSA" if completata else "APERTA"))
     total = db.execute(count_stmt).scalar()
 
     # Apply pagination

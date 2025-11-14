@@ -44,8 +44,10 @@ def list_config(
     if attivo is not None:
         stmt = stmt.where(ConfigCommessa.Attivo == attivo)
 
-    # Count total
-    count_stmt = select(func.count()).select_from(stmt.subquery())
+    # Count total - build separate count query with same filters
+    count_stmt = select(func.count(ConfigCommessa.ConfigCommessaID))
+    if attivo is not None:
+        count_stmt = count_stmt.where(ConfigCommessa.Attivo == attivo)
     total = db.execute(count_stmt).scalar()
 
     # Apply pagination
