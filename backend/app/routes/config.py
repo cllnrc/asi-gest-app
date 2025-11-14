@@ -99,7 +99,7 @@ def get_config(
     return ConfigCommessaWithFasi(**config_dict)
 
 
-@router.post("", response_model=ConfigCommessaResponse, status_code=201)
+@router.post("/config", response_model=ConfigCommessaResponse, status_code=201)
 def create_config(
     config_data: ConfigCommessaCreate,
     db: Session = Depends(get_db_asi_gest),
