@@ -74,6 +74,21 @@ def health_check():
     }
 
 
+# Debug endpoint to list all registered routes
+@app.get("/debug/routes")
+def list_routes():
+    """List all registered routes"""
+    routes = []
+    for route in app.routes:
+        if hasattr(route, 'path'):
+            routes.append({
+                "path": route.path,
+                "name": route.name if hasattr(route, 'name') else None,
+                "methods": list(route.methods) if hasattr(route, 'methods') else []
+            })
+    return {"total_routes": len(routes), "routes": routes}
+
+
 # Database initialization endpoint
 @app.post("/init-db")
 def initialize_database():
