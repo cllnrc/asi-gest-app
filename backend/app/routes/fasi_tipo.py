@@ -22,7 +22,7 @@ from app.schemas.fase_tipo import (
 router = APIRouter()
 
 
-@router.get("/", response_model=FaseTipoList)
+@router.get("", response_model=FaseTipoList)
 def list_fasi_tipo(
     page: int = Query(1, ge=1, description="Numero pagina"),
     page_size: int = Query(50, ge=1, le=100, description="Elementi per pagina"),
@@ -103,7 +103,7 @@ def get_fase_tipo(
     return FaseTipoResponse.model_validate(fase_tipo)
 
 
-@router.post("/", response_model=FaseTipoResponse, status_code=201)
+@router.post("", response_model=FaseTipoResponse, status_code=201)
 def create_fase_tipo(
     fase_tipo_data: FaseTipoCreate,
     db: Session = Depends(get_db_asi_gest),

@@ -24,7 +24,7 @@ from app.schemas import (
 router = APIRouter()
 
 
-@router.get("/", response_model=FaseList)
+@router.get("", response_model=FaseList)
 def list_fasi(
     commessa_erp_id: Optional[int] = Query(None, description="Filtra per CommessaERPId"),
     completata: Optional[bool] = Query(None, description="Filtra per fasi completate"),
@@ -128,7 +128,7 @@ def get_fase(
     return FaseWithDetails(**fase_dict)
 
 
-@router.post("/", response_model=FaseResponse, status_code=201)
+@router.post("", response_model=FaseResponse, status_code=201)
 def create_fase(
     fase_data: FaseCreate,
     db: Session = Depends(get_db_asi_gest),
