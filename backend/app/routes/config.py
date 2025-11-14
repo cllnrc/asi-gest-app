@@ -66,6 +66,30 @@ def list_config(
     )
 
 
+@router.get("/by-erp-id/{commessa_erp_id}", response_model=ConfigCommessaResponse)
+def get_config_by_erp_id(
+    commessa_erp_id: int,
+    db: Session = Depends(get_db_asi_gest),
+):
+    """
+    Recupera configurazione per CommessaERPId.
+
+    Utile per verificare se una commessa dal gestionale ERP è già configurata.
+    Ritorna 404 se non esiste.
+    """
+    config = db.execute(
+        select(ConfigCommessa).where(ConfigCommessa.CommessaERPId == commessa_erp_id)
+    ).scalar_one_or_none()
+
+    if not config:
+        raise HTTPException(
+            status_code=404,
+            detail=f"ConfigCommessa not found for CommessaERPId={commessa_erp_id}"
+        )
+
+    return ConfigCommessaResponse.model_validate(config)
+
+
 @router.get("/{config_id}", response_model=ConfigCommessaWithFasi)
 def get_config(
     config_id: int,
@@ -110,18 +134,41 @@ def create_config(
     Crea una nuova configurazione commessa.
 
     Parametri obbligatori:
+    - CommessaERPId: ID commessa dal gestionale ERP
     - CodiceArticolo: Codice articolo (es. "45.001.234")
     - Descrizione: Descrizione dell'articolo
-    - Note: Note sulla configurazione (opzionale)
 
-    Note: CommessaERPId deve essere assegnato separatamente tramite put.
+    Parametri opzionali:
+    - FlagSMD, FlagPTH, FlagControlli, FlagTerzista: Flag fasi produttive
+    - DIBA: Codice DIBA
+    - Revisione: Revisione scheda
+    - Note: Note sulla configurazione
+
     La configurazione viene creata con stato Attivo=True.
     """
+    # Check if already exists
+    existing = db.execute(
+        select(ConfigCommessa).where(ConfigCommessa.CommessaERPId == config_data.CommessaERPId)
+    ).scalar_one_or_none()
+
+    if existing:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Configurazione già esistente per CommessaERPId={config_data.CommessaERPId}"
+        )
+
     # Crea nuova configurazione
     new_config = ConfigCommessa(
-        CommessaERPId=0,  # Placeholder - sarà aggiornato separatamente
+        CommessaERPId=config_data.CommessaERPId,
         CodiceArticolo=config_data.CodiceArticolo,
         Descrizione=config_data.Descrizione,
+        FlagSMD=config_data.FlagSMD,
+        FlagPTH=config_data.FlagPTH,
+        FlagControlli=config_data.FlagControlli,
+        FlagTerzista=config_data.FlagTerzista,
+        DIBA=config_data.DIBA,
+        Revisione=config_data.Revisione,
+        BloccataDocumentazione=config_data.BloccataDocumentazione,
         Note=config_data.Note,
         DataCreazione=datetime.utcnow(),
         Attivo=True,
@@ -145,10 +192,14 @@ def update_config(
 
     Campi aggiornabili:
     - Descrizione: Descrizione dell'articolo
+    - FlagSMD, FlagPTH, FlagControlli, FlagTerzista: Flag fasi produttive
+    - DIBA: Codice DIBA
+    - Revisione: Revisione scheda
+    - BloccataDocumentazione: Flag blocco per documentazione
     - Note: Note sulla configurazione
     - Attivo: Se False, disabilita la configurazione (soft delete)
 
-    Non è possibile aggiornare CodiceArticolo direttamente.
+    Non è possibile aggiornare CodiceArticolo o CommessaERPId.
     """
     config = db.get(ConfigCommessa, config_id)
 
@@ -158,6 +209,27 @@ def update_config(
     # Update campi
     if config_data.Descrizione is not None:
         config.Descrizione = config_data.Descrizione
+
+    if config_data.FlagSMD is not None:
+        config.FlagSMD = config_data.FlagSMD
+
+    if config_data.FlagPTH is not None:
+        config.FlagPTH = config_data.FlagPTH
+
+    if config_data.FlagControlli is not None:
+        config.FlagControlli = config_data.FlagControlli
+
+    if config_data.FlagTerzista is not None:
+        config.FlagTerzista = config_data.FlagTerzista
+
+    if config_data.DIBA is not None:
+        config.DIBA = config_data.DIBA
+
+    if config_data.Revisione is not None:
+        config.Revisione = config_data.Revisione
+
+    if config_data.BloccataDocumentazione is not None:
+        config.BloccataDocumentazione = config_data.BloccataDocumentazione
 
     if config_data.Note is not None:
         config.Note = config_data.Note

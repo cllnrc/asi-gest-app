@@ -82,6 +82,24 @@ export interface Cliente {
   CAP: string | null;
 }
 
+export interface ConfigCommessa {
+  ConfigCommessaID: number;
+  CommessaERPId: number;
+  CodiceArticolo: string;
+  Descrizione: string;
+  FlagSMD: boolean;
+  FlagPTH: boolean;
+  FlagControlli: boolean;
+  FlagTerzista: boolean;
+  DIBA: string | null;
+  Revisione: string | null;
+  BloccataDocumentazione: boolean;
+  Note: string | null;
+  Attivo: boolean;
+  DataCreazione: string;
+  DataModifica: string;
+}
+
 export interface Lotto {
   LottoID: number;
   FaseID: number;
@@ -186,6 +204,61 @@ export const gestionaleApi = {
       `/api/gestionale/clienti?${params}`
     );
     return response.data;
+  },
+};
+
+// API functions - ConfigCommessa (ASI_GEST database)
+export const configCommessaApi = {
+  getConfigs: async (attivo?: boolean, page = 1, pageSize = 50) => {
+    const params = new URLSearchParams();
+    if (attivo !== undefined) params.append('attivo', attivo.toString());
+    params.append('page', page.toString());
+    params.append('page_size', pageSize.toString());
+    const response = await api.get<{ items: ConfigCommessa[]; total: number }>(`/api/config?${params}`);
+    return response.data;
+  },
+
+  getConfigByERPId: async (commessaERPId: number) => {
+    try {
+      const response = await api.get<ConfigCommessa>(`/api/config/by-erp-id/${commessaERPId}`);
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        return null; // Non esiste ancora
+      }
+      throw error;
+    }
+  },
+
+  getConfig: async (id: number) => {
+    const response = await api.get<ConfigCommessa>(`/api/config/${id}`);
+    return response.data;
+  },
+
+  createConfig: async (data: {
+    CommessaERPId: number;
+    CodiceArticolo: string;
+    Descrizione: string;
+    FlagSMD?: boolean;
+    FlagPTH?: boolean;
+    FlagControlli?: boolean;
+    FlagTerzista?: boolean;
+    DIBA?: string;
+    Revisione?: string;
+    BloccataDocumentazione?: boolean;
+    Note?: string;
+  }) => {
+    const response = await api.post<ConfigCommessa>('/api/config', data);
+    return response.data;
+  },
+
+  updateConfig: async (id: number, data: Partial<ConfigCommessa>) => {
+    const response = await api.put<ConfigCommessa>(`/api/config/${id}`, data);
+    return response.data;
+  },
+
+  deleteConfig: async (id: number) => {
+    await api.delete(`/api/config/${id}`);
   },
 };
 
