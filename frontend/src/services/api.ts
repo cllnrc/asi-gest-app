@@ -192,7 +192,7 @@ export const gestionaleApi = {
 // API functions - Lotti (ASI_GEST database)
 export const lottiApi = {
   getLotti: async () => {
-    const response = await api.get<{ items: Lotto[]; total: number }>('/api/lotti/');
+    const response = await api.get<{ items: Lotto[]; total: number }>('/api/lotti');
     return response.data;
   },
 
@@ -202,7 +202,7 @@ export const lottiApi = {
   },
 
   createLotto: async (data: { ConfigCommessaID?: number }) => {
-    const response = await api.post<Lotto>('/api/lotti/', data);
+    const response = await api.post<Lotto>('/api/lotti', data);
     return response.data;
   },
 
@@ -223,7 +223,7 @@ export const fasiApi = {
     if (lottoId !== undefined) params.append('LottoID', lottoId.toString());
     // FIX: Backend usa 'completata' (senza 'e')
     if (completata !== undefined) params.append('completata', completata.toString());
-    const response = await api.get<{ items: Fase[]; total: number }>(`/api/fasi/?${params}`);
+    const response = await api.get<{ items: Fase[]; total: number }>(`/api/fasi?${params}`);
     return response.data;
   },
 
@@ -233,7 +233,7 @@ export const fasiApi = {
   },
 
   createFase: async (data: Partial<Fase>) => {
-    const response = await api.post<Fase>('/api/fasi/', data);
+    const response = await api.post<Fase>('/api/fasi', data);
     return response.data;
   },
 
