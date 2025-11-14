@@ -24,7 +24,7 @@ from app.schemas import (
 router = APIRouter()
 
 
-@router.get("/fasi", response_model=FaseList)
+@router.get("", response_model=FaseList)
 def list_fasi(
     commessa_erp_id: Optional[int] = Query(None, description="Filtra per CommessaERPId"),
     completata: Optional[bool] = Query(None, description="Filtra per fasi completate"),
@@ -70,7 +70,7 @@ def list_fasi(
     )
 
 
-@router.get("/fasi/{fase_id}", response_model=FaseWithDetails)
+@router.get("/{fase_id}", response_model=FaseWithDetails)
 def get_fase(
     fase_id: int,
     db: Session = Depends(get_db_asi_gest),
@@ -124,7 +124,7 @@ def get_fase(
     return FaseWithDetails(**fase_dict)
 
 
-@router.post("/fasi", response_model=FaseResponse, status_code=201)
+@router.post("", response_model=FaseResponse, status_code=201)
 def create_fase(
     fase_data: FaseCreate,
     db: Session = Depends(get_db_asi_gest),
@@ -164,7 +164,7 @@ def create_fase(
     return FaseResponse.model_validate(new_fase)
 
 
-@router.put("/fasi/{fase_id}", response_model=FaseResponse)
+@router.put("/{fase_id}", response_model=FaseResponse)
 def update_fase(
     fase_id: int,
     fase_data: FaseUpdate,
@@ -207,7 +207,7 @@ def update_fase(
     return FaseResponse.model_validate(fase)
 
 
-@router.delete("/fasi/{fase_id}", status_code=204)
+@router.delete("/{fase_id}", status_code=204)
 def delete_fase(
     fase_id: int,
     db: Session = Depends(get_db_asi_gest),

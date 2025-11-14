@@ -23,7 +23,7 @@ from app.schemas import (
 router = APIRouter()
 
 
-@router.get("/config", response_model=ConfigCommessaList)
+@router.get("", response_model=ConfigCommessaList)
 def list_config(
     attivo: Optional[bool] = Query(None, description="Filtra per stato (attivo/inattivo)"),
     page: int = Query(1, ge=1, description="Numero pagina"),
@@ -99,7 +99,7 @@ def get_config(
     return ConfigCommessaWithFasi(**config_dict)
 
 
-@router.post("/config", response_model=ConfigCommessaResponse, status_code=201)
+@router.post("", response_model=ConfigCommessaResponse, status_code=201)
 def create_config(
     config_data: ConfigCommessaCreate,
     db: Session = Depends(get_db_asi_gest),
