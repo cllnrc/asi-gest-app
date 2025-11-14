@@ -71,7 +71,7 @@ def list_fasi_tipo(
     )
 
 
-@router.get("/{fase_tipo_id}", response_model=FaseTipoResponse)
+@router.get("/fasi-tipo/{fase_tipo_id}", response_model=FaseTipoResponse)
 def get_fase_tipo(
     fase_tipo_id: int,
     db: Session = Depends(get_db_asi_gest),
@@ -148,7 +148,7 @@ def create_fase_tipo(
         )
 
 
-@router.put("/{fase_tipo_id}", response_model=FaseTipoResponse)
+@router.put("/fasi-tipo/{fase_tipo_id}", response_model=FaseTipoResponse)
 def update_fase_tipo(
     fase_tipo_id: int,
     fase_tipo_data: FaseTipoUpdate,
@@ -206,7 +206,7 @@ def update_fase_tipo(
         )
 
 
-@router.delete("/{fase_tipo_id}", response_model=FaseTipoResponse)
+@router.delete("/fasi-tipo/{fase_tipo_id}", response_model=FaseTipoResponse)
 def delete_fase_tipo(
     fase_tipo_id: int,
     db: Session = Depends(get_db_asi_gest),

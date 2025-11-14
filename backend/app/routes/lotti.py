@@ -133,7 +133,7 @@ def get_lotto(
     return LottoWithDetails(**lotto_dict)
 
 
-@router.post("", response_model=LottoResponse, status_code=201)
+@router.post("/lotti", response_model=LottoResponse, status_code=201)
 def create_lotto(
     lotto_data: LottoCreate,
     db: Session = Depends(get_db_asi_gest),
@@ -181,7 +181,7 @@ def create_lotto(
     return LottoResponse.model_validate(new_lotto)
 
 
-@router.put("/{lotto_id}/close", response_model=LottoResponse)
+@router.put("/lotti/{lotto_id}/close", response_model=LottoResponse)
 def close_lotto(
     lotto_id: int,
     close_data: LottoClose,
@@ -211,7 +211,7 @@ def close_lotto(
     return LottoResponse.model_validate(lotto)
 
 
-@router.delete("/{lotto_id}", status_code=204)
+@router.delete("/lotti/{lotto_id}", status_code=204)
 def delete_lotto(
     lotto_id: int,
     db: Session = Depends(get_db_asi_gest),

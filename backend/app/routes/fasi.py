@@ -70,7 +70,7 @@ def list_fasi(
     )
 
 
-@router.get("/{fase_id}", response_model=FaseWithDetails)
+@router.get("/fasi/{fase_id}", response_model=FaseWithDetails)
 def get_fase(
     fase_id: int,
     db: Session = Depends(get_db_asi_gest),
@@ -164,7 +164,7 @@ def create_fase(
     return FaseResponse.model_validate(new_fase)
 
 
-@router.put("/{fase_id}", response_model=FaseResponse)
+@router.put("/fasi/{fase_id}", response_model=FaseResponse)
 def update_fase(
     fase_id: int,
     fase_data: FaseUpdate,
@@ -207,7 +207,7 @@ def update_fase(
     return FaseResponse.model_validate(fase)
 
 
-@router.delete("/{fase_id}", status_code=204)
+@router.delete("/fasi/{fase_id}", status_code=204)
 def delete_fase(
     fase_id: int,
     db: Session = Depends(get_db_asi_gest),

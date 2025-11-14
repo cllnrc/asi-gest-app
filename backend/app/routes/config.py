@@ -23,7 +23,7 @@ from app.schemas import (
 router = APIRouter()
 
 
-@router.get("", response_model=ConfigCommessaList)
+@router.get("/config", response_model=ConfigCommessaList)
 def list_config(
     attivo: Optional[bool] = Query(None, description="Filtra per stato (attivo/inattivo)"),
     page: int = Query(1, ge=1, description="Numero pagina"),
