@@ -38,7 +38,7 @@ except ImportError:
 router = APIRouter()
 
 
-@router.get("/", response_model=LottoList)
+@router.get("/lotti", response_model=LottoList)
 def list_lotti(
     fase_id: Optional[int] = Query(None, description="Filtra per FaseID"),
     aperto: Optional[bool] = Query(None, description="Filtra per lotti aperti (DataFine NULL)"),
@@ -81,7 +81,7 @@ def list_lotti(
     )
 
 
-@router.get("/{lotto_id}", response_model=LottoWithDetails)
+@router.get("/lotti/{lotto_id}", response_model=LottoWithDetails)
 def get_lotto(
     lotto_id: int,
     db: Session = Depends(get_db_asi_gest),

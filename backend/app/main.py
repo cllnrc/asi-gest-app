@@ -155,29 +155,29 @@ def initialize_database():
         }
 
 
-# Register API routers
+# Register API routers (using /api prefix like anagrafiche, paths are explicit in routers)
 print("🔍 DEBUG: Registering routers...")
 try:
-    app.include_router(lotti.router, prefix="/api/lotti", tags=["Lotti"])
-    print("✅ lotti router registered at /api/lotti")
+    app.include_router(lotti.router, prefix="/api", tags=["Lotti"])
+    print("✅ lotti router registered at /api")
 except Exception as e:
     print(f"❌ lotti router registration failed: {e}")
 
 try:
-    app.include_router(fasi.router, prefix="/api/fasi", tags=["Fasi"])
-    print("✅ fasi router registered at /api/fasi")
+    app.include_router(fasi.router, prefix="/api", tags=["Fasi"])
+    print("✅ fasi router registered at /api")
 except Exception as e:
     print(f"❌ fasi router registration failed: {e}")
 
 try:
-    app.include_router(fasi_tipo.router, prefix="/api/fasi-tipo", tags=["FasiTipo"])
-    print("✅ fasi_tipo router registered at /api/fasi-tipo")
+    app.include_router(fasi_tipo.router, prefix="/api", tags=["FasiTipo"])
+    print("✅ fasi_tipo router registered at /api")
 except Exception as e:
     print(f"❌ fasi_tipo router registration failed: {e}")
 
 try:
-    app.include_router(config.router, prefix="/api/config", tags=["ConfigCommessa"])
-    print("✅ config router registered at /api/config")
+    app.include_router(config.router, prefix="/api", tags=["ConfigCommessa"])
+    print("✅ config router registered at /api")
 except Exception as e:
     print(f"❌ config router registration failed: {e}")
 
