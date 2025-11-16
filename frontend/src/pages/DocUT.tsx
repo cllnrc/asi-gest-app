@@ -7,11 +7,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { docUTApi, DocUT } from '../services/api';
+import { docUTApi, DocUT as DocUTType } from '../services/api';
 import './DocUT.css';
 
 const DocUT: React.FC = () => {
-  const [docUTList, setDocUTList] = useState<DocUT[]>([]);
+  const [docUTList, setDocUTList] = useState<DocUTType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
@@ -23,7 +23,7 @@ const DocUT: React.FC = () => {
   const [filtro45, setFiltro45] = useState(false);
 
   // Modal
-  const [selectedDocUT, setSelectedDocUT] = useState<DocUT | null>(null);
+  const [selectedDocUT, setSelectedDocUT] = useState<DocUTType | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   // Load data
@@ -47,7 +47,7 @@ const DocUT: React.FC = () => {
   }, [page, search, filtro45]);
 
   // Calculate UT completion (0-4)
-  const getUTCompletion = (doc: DocUT): number => {
+  const getUTCompletion = (doc: DocUTType): number => {
     let count = 0;
     if (doc.DIBA) count++;
     if (doc.ProgrammaMyData) count++;
@@ -57,7 +57,7 @@ const DocUT: React.FC = () => {
   };
 
   // Get completion indicator (✓✓✓✓)
-  const getUTIndicator = (doc: DocUT): string => {
+  const getUTIndicator = (doc: DocUTType): string => {
     const completion = getUTCompletion(doc);
     const checked = '✓'.repeat(completion);
     const unchecked = '-'.repeat(4 - completion);
@@ -65,14 +65,14 @@ const DocUT: React.FC = () => {
   };
 
   // Get completion CSS class
-  const getCompletionClass = (doc: DocUT): string => {
+  const getCompletionClass = (doc: DocUTType): string => {
     const completion = getUTCompletion(doc);
     if (completion === 4) return 'complete';
     if (completion >= 2) return 'partial';
     return 'incomplete';
   };
 
-  const openModal = (doc: DocUT) => {
+  const openModal = (doc: DocUTType) => {
     setSelectedDocUT(doc);
     setShowModal(true);
   };
@@ -82,7 +82,7 @@ const DocUT: React.FC = () => {
     setSelectedDocUT(null);
   };
 
-  const handleSave = async (updatedDoc: Partial<DocUT>) => {
+  const handleSave = async (updatedDoc: Partial<DocUTType>) => {
     if (!selectedDocUT) return;
 
     try {
