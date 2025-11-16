@@ -20,7 +20,6 @@ const DocUT: React.FC = () => {
 
   // Filters
   const [search, setSearch] = useState('');
-  const [filtro45, setFiltro45] = useState(false);
 
   // Modal
   const [selectedDocUT, setSelectedDocUT] = useState<DocUTType | null>(null);
@@ -31,7 +30,7 @@ const DocUT: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await docUTApi.getArticoliConDocumentazione(page, pageSize, search || undefined, filtro45);
+      const data = await docUTApi.getArticoliConDocumentazione(page, pageSize, search || undefined);
       setDocUTList(data.items);
       setTotal(data.total);
     } catch (err) {
@@ -44,7 +43,7 @@ const DocUT: React.FC = () => {
 
   useEffect(() => {
     loadData();
-  }, [page, search, filtro45]);
+  }, [page, search]);
 
   // Calculate UT completion (0-4)
   const getUTCompletion = (doc: DocUTType): number => {
@@ -125,19 +124,6 @@ const DocUT: React.FC = () => {
               setPage(1); // Reset to first page on search
             }}
           />
-        </div>
-        <div className="filter-checkbox">
-          <label>
-            <input
-              type="checkbox"
-              checked={filtro45}
-              onChange={(e) => {
-                setFiltro45(e.target.checked);
-                setPage(1);
-              }}
-            />
-            Solo articoli 45.xxx
-          </label>
         </div>
       </div>
 

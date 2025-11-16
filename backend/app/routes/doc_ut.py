@@ -29,7 +29,6 @@ def list_articoli_con_documentazione(
     page: int = Query(1, ge=1),
     page_size: int = Query(30, ge=1, le=100),
     search: Optional[str] = Query(None),
-    filtro_45: bool = Query(False),
     db_asitron: Session = Depends(get_db_asitron),
     db_asi_gest: Session = Depends(get_db_asi_gest),
 ):
@@ -40,22 +39,27 @@ def list_articoli_con_documentazione(
     - Articoli da ANAGRAFICAARTICOLI (gestionale ASITRON)
     - Documentazione UT da DocUT (database ASI_GEST)
 
+    Filtri fissi:
+    - Solo articoli 45.xxx (prodotti finiti)
+    - Solo ultimo anno (da DATAMODIFICA)
+    - Ordinamento: DATAMODIFICA DESC (più recenti prima)
+
     Per ogni articolo:
     - Se esiste DocUT → ritorna documentazione completa
     - Se NON esiste DocUT → ritorna articolo con DocUT = null
     """
-    # Build WHERE clause for search and filtro_45
-    where_clauses = []
+    # Build WHERE clause
+    where_clauses = [
+        "CODICE LIKE '45.%'",  # Solo prodotti finiti
+        "DATAMODIFICA >= DATEADD(year, -1, GETDATE())"  # Ultimo anno
+    ]
     params = {}
 
     if search:
         where_clauses.append("(CODICE LIKE :search OR DESCRIZIONE LIKE :search)")
         params["search"] = f"%{search}%"
 
-    if filtro_45:
-        where_clauses.append("CODICE LIKE '45.%'")
-
-    where_sql = " AND ".join(where_clauses) if where_clauses else "1=1"
+    where_sql = " AND ".join(where_clauses)
 
     # Count total matching articles
     count_sql = text(f"""
@@ -75,7 +79,7 @@ def list_articoli_con_documentazione(
             CAST(ARTTIPOLOGIA AS VARCHAR(10)) as ARTTIPOLOGIA
         FROM dbo.ANAGRAFICAARTICOLI
         WHERE {where_sql}
-        ORDER BY CODICE ASC
+        ORDER BY DATAMODIFICA DESC, CODICE DESC
         OFFSET {offset} ROWS
         FETCH NEXT {page_size} ROWS ONLY
     """)

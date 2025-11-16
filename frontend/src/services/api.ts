@@ -378,12 +378,11 @@ export const fasiTipoApi = {
 // API functions - DocUT (ASI_GEST database)
 export const docUTApi = {
   // Get articles from gestionale with DocUT documentation
-  getArticoliConDocumentazione: async (page: number = 1, pageSize: number = 30, search?: string, filtro45?: boolean) => {
+  getArticoliConDocumentazione: async (page: number = 1, pageSize: number = 30, search?: string) => {
     const params = new URLSearchParams();
     params.append('page', page.toString());
     params.append('page_size', pageSize.toString());
     if (search) params.append('search', search);
-    if (filtro45) params.append('filtro_45', 'true');
 
     const response = await api.get<{ items: DocUT[]; total: number; page: number; page_size: number }>(`/api/doc-ut/articoli-con-documentazione?${params}`);
     return response.data;
