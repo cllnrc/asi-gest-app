@@ -58,6 +58,14 @@ except Exception as e:
     import traceback
     traceback.print_exc()
 
+try:
+    from app.routes import doc_ut
+    print("✅ doc_ut router imported")
+except Exception as e:
+    print(f"❌ doc_ut import failed: {e}")
+    import traceback
+    traceback.print_exc()
+
 print("🔍 DEBUG: Router imports complete")
 
 
@@ -180,6 +188,12 @@ try:
     print("✅ config router registered at /api/config")
 except Exception as e:
     print(f"❌ config router registration failed: {e}")
+
+try:
+    app.include_router(doc_ut.router, prefix="/api/doc-ut", tags=["DocUT"])
+    print("✅ doc_ut router registered at /api/doc-ut")
+except Exception as e:
+    print(f"❌ doc_ut router registration failed: {e}")
 
 try:
     app.include_router(gestionale.router, prefix="/api/gestionale", tags=["Gestionale"])
