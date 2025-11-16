@@ -11,6 +11,7 @@ export default function Layout() {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard' },
     { path: '/commesse', label: 'Commesse' },
+    { path: '/doc-ut', label: 'Doc UT' },
     { path: '/lotti', label: 'Lotti' },
     { path: '/smd', label: 'SMD' },
     { path: '/pth', label: 'PTH' },

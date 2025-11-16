@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Commesse from './pages/Commesse';
+import DocUT from './pages/DocUT';
 import Lotti from './pages/Lotti';
 import SMD from './pages/SMD';
 import PTH from './pages/PTH';
@@ -22,6 +23,7 @@ function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="commesse" element={<Commesse />} />
+          <Route path="doc-ut" element={<DocUT />} />
           <Route path="lotti" element={<Lotti />} />
           <Route path="smd" element={<SMD />} />
           <Route path="pth" element={<PTH />} />
