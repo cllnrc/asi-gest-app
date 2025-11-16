@@ -10,9 +10,9 @@ from typing import Optional
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func, or_
+from sqlalchemy import select, func, or_, text
 
-from app.core.database import get_db_asi_gest
+from app.core.database import get_db_asi_gest, get_db_asitron
 from app.models.doc_ut import DocUT
 from app.schemas.doc_ut import (
     DocUTCreate,
@@ -22,6 +22,128 @@ from app.schemas.doc_ut import (
 )
 
 router = APIRouter()
+
+
+@router.get("/articoli-con-documentazione")
+def list_articoli_con_documentazione(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(30, ge=1, le=100),
+    search: Optional[str] = Query(None),
+    filtro_45: bool = Query(False),
+    db_asitron: Session = Depends(get_db_asitron),
+    db_asi_gest: Session = Depends(get_db_asi_gest),
+):
+    """
+    Lista articoli da gestionale con documentazione UT associata.
+
+    Combina:
+    - Articoli da ANAGRAFICAARTICOLI (gestionale ASITRON)
+    - Documentazione UT da DocUT (database ASI_GEST)
+
+    Per ogni articolo:
+    - Se esiste DocUT → ritorna documentazione completa
+    - Se NON esiste DocUT → ritorna articolo con DocUT = null
+    """
+    # Build WHERE clause for search and filtro_45
+    where_clauses = []
+    params = {}
+
+    if search:
+        where_clauses.append("(CODICE LIKE :search OR DESCRIZIONE LIKE :search)")
+        params["search"] = f"%{search}%"
+
+    if filtro_45:
+        where_clauses.append("CODICE LIKE '45.%'")
+
+    where_sql = " AND ".join(where_clauses) if where_clauses else "1=1"
+
+    # Count total matching articles
+    count_sql = text(f"""
+        SELECT COUNT(*)
+        FROM dbo.ANAGRAFICAARTICOLI
+        WHERE {where_sql}
+    """)
+    total_result = db_asitron.execute(count_sql, params)
+    total = total_result.scalar()
+
+    # Get paginated articles
+    offset = (page - 1) * page_size
+    articles_sql = text(f"""
+        SELECT
+            CODICE,
+            DESCRIZIONE,
+            CAST(ARTTIPOLOGIA AS VARCHAR(10)) as ARTTIPOLOGIA
+        FROM dbo.ANAGRAFICAARTICOLI
+        WHERE {where_sql}
+        ORDER BY CODICE ASC
+        OFFSET {offset} ROWS
+        FETCH NEXT {page_size} ROWS ONLY
+    """)
+
+    articles_result = db_asitron.execute(articles_sql, params)
+    articles = articles_result.fetchall()
+
+    # Get all codici articoli for DocUT lookup
+    codici = [row[0] for row in articles]
+
+    # Bulk lookup DocUT for all articles
+    doc_ut_dict = {}
+    if codici:
+        doc_ut_stmt = select(DocUT).where(DocUT.CodiceArticolo.in_(codici))
+        doc_ut_results = db_asi_gest.execute(doc_ut_stmt).scalars().all()
+        doc_ut_dict = {doc.CodiceArticolo: doc for doc in doc_ut_results}
+
+    # Combine results
+    items = []
+    for codice, descrizione, tipologia in articles:
+        doc_ut = doc_ut_dict.get(codice)
+
+        if doc_ut:
+            # DocUT exists - return full documentation
+            items.append(DocUTResponse.model_validate(doc_ut))
+        else:
+            # DocUT doesn't exist - return article with empty DocUT
+            items.append({
+                "DocUTID": None,
+                "CodiceArticolo": codice,
+                "Descrizione": descrizione,
+                # All UT fields as False/None
+                "DIBA": False,
+                "DIBAData": None,
+                "DIBAUtente": None,
+                "ProgrammaMyData": False,
+                "ProgrammaMyDataData": None,
+                "ProgrammaMyDataUtente": None,
+                "PDM": False,
+                "PDMData": None,
+                "PDMUtente": None,
+                "FileLaminaTelaio": None,
+                "FileLaminaTelaioData": None,
+                "FileLaminaTelaioUtente": None,
+                # Cliente fields
+                "DIBACliente": False,
+                "PDMCliente": False,
+                "FilePP": False,
+                # Post Production fields
+                "FotoPCB": False,
+                "FotoProdotto": False,
+                "TempiLavorazione": False,
+                "FasiLavorazione": False,
+                "PPUtente": False,
+                "Campionatura": False,
+                "DocProduzione": False,
+                # Metadata
+                "DataInserimento": None,
+                "DataModifica": None,
+                "Attivo": True,
+            })
+
+    return {
+        "items": items,
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+    }
 
 
 @router.get("", response_model=DocUTList)

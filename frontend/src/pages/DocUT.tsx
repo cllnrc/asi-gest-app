@@ -26,17 +26,17 @@ const DocUT: React.FC = () => {
   const [selectedDocUT, setSelectedDocUT] = useState<DocUTType | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  // Load data
+  // Load data - articoli da gestionale con documentazione UT
   const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await docUTApi.getDocUT(page, pageSize, search || undefined, filtro45, undefined);
+      const data = await docUTApi.getArticoliConDocumentazione(page, pageSize, search || undefined, filtro45);
       setDocUTList(data.items);
       setTotal(data.total);
     } catch (err) {
-      console.error('Error loading DocUT:', err);
-      setError('Errore nel caricamento della documentazione');
+      console.error('Error loading articoli:', err);
+      setError('Errore nel caricamento degli articoli');
     } finally {
       setLoading(false);
     }
@@ -86,11 +86,21 @@ const DocUT: React.FC = () => {
     if (!selectedDocUT) return;
 
     try {
-      await docUTApi.updateDocUT(selectedDocUT.DocUTID, updatedDoc);
+      if (selectedDocUT.DocUTID) {
+        // Update existing DocUT
+        await docUTApi.updateDocUT(selectedDocUT.DocUTID, updatedDoc);
+      } else {
+        // Create new DocUT
+        await docUTApi.createDocUT({
+          CodiceArticolo: selectedDocUT.CodiceArticolo,
+          Descrizione: selectedDocUT.Descrizione,
+          ...updatedDoc,
+        });
+      }
       closeModal();
       loadData(); // Reload list
     } catch (err) {
-      console.error('Error updating DocUT:', err);
+      console.error('Error saving DocUT:', err);
       alert('Errore durante il salvataggio');
     }
   };
@@ -101,7 +111,6 @@ const DocUT: React.FC = () => {
     <div className="docUT-container">
       <div className="docUT-header">
         <h1>Documentazione Tecnica (UT)</h1>
-        <button className="btn-primary">+ Nuovo</button>
       </div>
 
       {/* Filters */}
