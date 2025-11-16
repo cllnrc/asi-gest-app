@@ -14,6 +14,7 @@ from app.models.fase import Fase
 from app.models.lotto import Lotto
 from app.models.documento_tecnico import DocumentoTecnico
 from app.models.log_evento import LogEvento
+from app.models.doc_ut import DocUT
 
 __all__ = [
     "FaseTipo",
@@ -24,4 +25,5 @@ __all__ = [
     "Lotto",
     "DocumentoTecnico",
     "LogEvento",
+    "DocUT",
 ]
