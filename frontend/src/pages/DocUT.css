@@ -71,11 +71,24 @@
 }
 
 .docUT-table th {
-  padding: 12px;
+  padding: 8px 12px;
   text-align: left;
   font-weight: 600;
   color: #495057;
-  font-size: 14px;
+  font-size: 13px;
+  background-color: #f8f9fa;
+}
+
+.docUT-table th:nth-child(3) {
+  background-color: #e3f2fd; /* Azzurro per colonna UT */
+}
+
+.docUT-table th:nth-child(4) {
+  background-color: #fff3e0; /* Arancione chiaro per colonna Cliente */
+}
+
+.docUT-table th:nth-child(5) {
+  background-color: #f3e5f5; /* Viola chiaro per colonna Post Prod */
 }
 
 .docUT-table tbody tr {
@@ -83,26 +96,43 @@
   transition: background-color 0.2s;
 }
 
+.docUT-table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
 .docUT-table tbody tr.clickable {
   cursor: pointer;
 }
 
 .docUT-table tbody tr.clickable:hover {
-  background-color: #f8f9fa;
+  background-color: #e8f4f8 !important;
 }
 
 .docUT-table td {
-  padding: 12px;
-  font-size: 14px;
+  padding: 6px 12px;
+  font-size: 13px;
   color: #212529;
+}
+
+.docUT-table td:nth-child(3) {
+  background-color: #f0f8ff;
+}
+
+.docUT-table td:nth-child(4) {
+  background-color: #fffaf0;
+}
+
+.docUT-table td:nth-child(5) {
+  background-color: #faf5ff;
 }
 
 /* UT Indicator */
 .ut-indicator {
   font-family: monospace;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: bold;
   text-align: center;
+  letter-spacing: 3px;
 }
 
 .ut-indicator.complete {
@@ -120,8 +150,11 @@
 .cliente-indicator,
 .post-prod-indicator {
   font-family: monospace;
-  font-size: 14px;
+  font-size: 18px;
+  font-weight: bold;
   text-align: center;
+  letter-spacing: 4px;
+  color: #495057;
 }
 
 /* Pagination */
