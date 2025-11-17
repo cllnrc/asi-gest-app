@@ -245,17 +245,19 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Documentazione Tecnica - {docUT.CodiceArticolo}</h2>
+          <div className="modal-header-info">
+            <div className="modal-header-codice">{docUT.CodiceArticolo}</div>
+            <div className="modal-header-descrizione">{docUT.Descrizione || 'Nessuna descrizione'}</div>
+          </div>
           <button className="modal-close" onClick={onClose}>&times;</button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="modal-body">
-            <p className="modal-description">{docUT.Descrizione || 'Nessuna descrizione'}</p>
+          <div className="modal-body-three-column">
+            {/* Colonna 1: UT */}
+            <div className="modal-column modal-column-ut">
+              <h3 className="column-title">UT</h3>
 
-            {/* Sezione UT */}
-            <div className="modal-section">
-              <h3>📋 UFFICIO TECNICO</h3>
               <div className="modal-field">
                 <label>
                   <input
@@ -283,7 +285,7 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                     checked={formData.ProgrammaMyData || false}
                     onChange={() => handleCheckboxChange('ProgrammaMyData')}
                   />
-                  PROGRAMMA MYDATA
+                  MYDATA
                   {formData.ProgrammaMyData && (
                     <span
                       className="field-info clickable"
@@ -316,33 +318,36 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                 </label>
               </div>
 
-              <div className="modal-field">
-                <label>FILE LAMINA/TELAIO</label>
-                <select
-                  value={formData.FileLaminaTelaio || ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, FileLaminaTelaio: e.target.value || null }))}
-                >
-                  <option value="">Nessuno</option>
-                  <option value="CLIENTE">Cliente</option>
-                  <option value="TOP">TOP</option>
-                  <option value="BOTTOM">BOTTOM</option>
-                  <option value="TOP+BOTTOM">TOP+BOTTOM</option>
-                </select>
-                {formData.FileLaminaTelaio && (
-                  <span
-                    className="field-info clickable"
-                    title={formData.FileLaminaTelaioData ? `${new Date(formData.FileLaminaTelaioData).toLocaleString()} | ${formData.FileLaminaTelaioUtente || '?'}` : 'Click per impostare data/utente'}
-                    onClick={(e) => openFieldEditor('FileLaminaTelaio', e)}
+              <div className="modal-field modal-field-select">
+                <label className="select-label">FILE T/L</label>
+                <div className="select-with-icon">
+                  <select
+                    value={formData.FileLaminaTelaio || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, FileLaminaTelaio: e.target.value || null }))}
                   >
-                    📅
-                  </span>
-                )}
+                    <option value="">Nessuno</option>
+                    <option value="CLIENTE">Cliente</option>
+                    <option value="TOP">TOP</option>
+                    <option value="BOTTOM">BOTTOM</option>
+                    <option value="TOP+BOTTOM">TOP+BOTTOM</option>
+                  </select>
+                  {formData.FileLaminaTelaio && (
+                    <span
+                      className="field-info clickable"
+                      title={formData.FileLaminaTelaioData ? `${new Date(formData.FileLaminaTelaioData).toLocaleString()} | ${formData.FileLaminaTelaioUtente || '?'}` : 'Click per impostare data/utente'}
+                      onClick={(e) => openFieldEditor('FileLaminaTelaio', e)}
+                    >
+                      📅
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Sezione Cliente */}
-            <div className="modal-section">
-              <h3>👤 CLIENTE</h3>
+            {/* Colonna 2: CLIENTE */}
+            <div className="modal-column modal-column-cliente">
+              <h3 className="column-title">CLIENTE</h3>
+
               <div className="modal-field">
                 <label>
                   <input
@@ -350,9 +355,10 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                     checked={formData.DIBACliente || false}
                     onChange={() => handleCheckboxChange('DIBACliente')}
                   />
-                  DI.BA. CLIENTE
+                  DI.BA.
                 </label>
               </div>
+
               <div className="modal-field">
                 <label>
                   <input
@@ -360,9 +366,10 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                     checked={formData.PDMCliente || false}
                     onChange={() => handleCheckboxChange('PDMCliente')}
                   />
-                  PDM CLIENTE
+                  PDM
                 </label>
               </div>
+
               <div className="modal-field">
                 <label>
                   <input
@@ -370,39 +377,27 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                     checked={formData.FilePP || false}
                     onChange={() => handleCheckboxChange('FilePP')}
                   />
-                  FILE P&P
+                  P&P
                 </label>
               </div>
             </div>
 
-            {/* Sezione Post Production */}
-            <div className="modal-section">
-              <h3>📦 POST PRODUCTION</h3>
-              <div className="modal-grid">
+            {/* Colonna 3: PRE&POST-PRODUCTION */}
+            <div className="modal-column modal-column-postprod">
+              <h3 className="column-title">PRE&POST-PRODUCTION</h3>
+
+              <div className="modal-field">
                 <label>
                   <input
                     type="checkbox"
-                    checked={formData.FotoPCB || false}
-                    onChange={() => handleCheckboxChange('FotoPCB')}
+                    checked={formData.PPUtente || false}
+                    onChange={() => handleCheckboxChange('PPUtente')}
                   />
-                  FOTO PCB
+                  UT P&P
                 </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={formData.FotoProdotto || false}
-                    onChange={() => handleCheckboxChange('FotoProdotto')}
-                  />
-                  FOTO PRODOTTO
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={formData.TempiLavorazione || false}
-                    onChange={() => handleCheckboxChange('TempiLavorazione')}
-                  />
-                  TEMPI LAVORAZIONE
-                </label>
+              </div>
+
+              <div className="modal-field">
                 <label>
                   <input
                     type="checkbox"
@@ -411,14 +406,42 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                   />
                   FASI LAVORAZIONE
                 </label>
+              </div>
+
+              <div className="modal-field">
                 <label>
                   <input
                     type="checkbox"
-                    checked={formData.PPUtente || false}
-                    onChange={() => handleCheckboxChange('PPUtente')}
+                    checked={formData.FotoPCB || false}
+                    onChange={() => handleCheckboxChange('FotoPCB')}
                   />
-                  P&P UTENTE
+                  FOTO PCB
                 </label>
+              </div>
+
+              <div className="modal-field">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={formData.FotoProdotto || false}
+                    onChange={() => handleCheckboxChange('FotoProdotto')}
+                  />
+                  FOTO PRODOTTO
+                </label>
+              </div>
+
+              <div className="modal-field">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={formData.TempiLavorazione || false}
+                    onChange={() => handleCheckboxChange('TempiLavorazione')}
+                  />
+                  TEMPI LAVORAZIONE
+                </label>
+              </div>
+
+              <div className="modal-field">
                 <label>
                   <input
                     type="checkbox"
@@ -427,13 +450,16 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                   />
                   CAMPIONATURA
                 </label>
+              </div>
+
+              <div className="modal-field">
                 <label>
                   <input
                     type="checkbox"
                     checked={formData.DocProduzione || false}
                     onChange={() => handleCheckboxChange('DocProduzione')}
                   />
-                  DOC. PRODUZIONE
+                  DOCUMENTAZIONE PRODUZIONE
                 </label>
               </div>
             </div>

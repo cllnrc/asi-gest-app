@@ -189,14 +189,28 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 10px 15px;
   border-bottom: 1px solid #e9ecef;
 }
 
-.modal-header h2 {
-  margin: 0;
-  font-size: 20px;
-  color: #333;
+.modal-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.modal-header-codice {
+  font-size: 16px;
+  font-weight: 600;
+  color: #d97777;
+  /* Red pastel */
+}
+
+.modal-header-descrizione {
+  font-size: 16px;
+  font-weight: 600;
+  color: #77c9a1;
+  /* Green pastel */
 }
 
 .modal-close {
@@ -221,6 +235,45 @@
   padding: 20px;
 }
 
+/* Three-column layout for modal */
+.modal-body-three-column {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  padding: 0;
+}
+
+.modal-column {
+  padding: 12px 15px;
+  min-height: 200px;
+}
+
+.modal-column-ut {
+  background-color: #fff5e6;
+  /* Warm pastel orange/beige */
+}
+
+.modal-column-cliente {
+  background-color: #e6f3ff;
+  /* Cool pastel blue */
+}
+
+.modal-column-postprod {
+  background-color: #f0e6ff;
+  /* Soft pastel purple */
+}
+
+.column-title {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #495057;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .modal-description {
   color: #6c757d;
   font-size: 14px;
@@ -242,29 +295,50 @@
 }
 
 .modal-field {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .modal-field label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
   user-select: none;
-  font-size: 14px;
+  font-size: 12px;
+  line-height: 1.3;
 }
 
 .modal-field input[type="checkbox"] {
   cursor: pointer;
 }
 
+/* Select field styling for FILE T/L */
+.modal-field-select {
+  margin-top: 8px;
+}
+
+.select-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #495057;
+  cursor: default !important;
+}
+
+.select-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .modal-field select {
-  width: 100%;
-  padding: 8px;
+  flex: 1;
+  padding: 5px 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
-  margin-top: 5px;
+  font-size: 11px;
+  background-color: white;
 }
 
 .field-info {
@@ -293,7 +367,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  padding: 20px;
+  padding: 10px 15px;
   border-top: 1px solid #e9ecef;
 }
 
