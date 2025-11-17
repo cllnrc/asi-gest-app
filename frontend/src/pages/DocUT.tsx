@@ -266,16 +266,23 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                     onChange={() => handleCheckboxChange('DIBA')}
                   />
                   DI.BA.
-                  {formData.DIBA && (
-                    <span
-                      className="field-info clickable"
-                      title={formData.DIBAData ? `${new Date(formData.DIBAData).toLocaleString()} | ${formData.DIBAUtente || '?'}` : 'Click per impostare data/utente'}
-                      onClick={(e) => openFieldEditor('DIBA', e)}
-                    >
-                      📅
-                    </span>
-                  )}
                 </label>
+                {formData.DIBA && (
+                  <div className="field-metadata">
+                    <input
+                      type="text"
+                      className="utente-input"
+                      placeholder="Utente"
+                      value={formData.DIBAUtente || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, DIBAUtente: e.target.value }))}
+                    />
+                    {formData.DIBAData && (
+                      <span className="data-display">
+                        {new Date(formData.DIBAData).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' })}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="modal-field">
@@ -286,16 +293,23 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                     onChange={() => handleCheckboxChange('ProgrammaMyData')}
                   />
                   MYDATA
-                  {formData.ProgrammaMyData && (
-                    <span
-                      className="field-info clickable"
-                      title={formData.ProgrammaMyDataData ? `${new Date(formData.ProgrammaMyDataData).toLocaleString()} | ${formData.ProgrammaMyDataUtente || '?'}` : 'Click per impostare data/utente'}
-                      onClick={(e) => openFieldEditor('ProgrammaMyData', e)}
-                    >
-                      📅
-                    </span>
-                  )}
                 </label>
+                {formData.ProgrammaMyData && (
+                  <div className="field-metadata">
+                    <input
+                      type="text"
+                      className="utente-input"
+                      placeholder="Utente"
+                      value={formData.ProgrammaMyDataUtente || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, ProgrammaMyDataUtente: e.target.value }))}
+                    />
+                    {formData.ProgrammaMyDataData && (
+                      <span className="data-display">
+                        {new Date(formData.ProgrammaMyDataData).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' })}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="modal-field">
@@ -306,41 +320,53 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                     onChange={() => handleCheckboxChange('PDM')}
                   />
                   PDM
-                  {formData.PDM && (
-                    <span
-                      className="field-info clickable"
-                      title={formData.PDMData ? `${new Date(formData.PDMData).toLocaleString()} | ${formData.PDMUtente || '?'}` : 'Click per impostare data/utente'}
-                      onClick={(e) => openFieldEditor('PDM', e)}
-                    >
-                      📅
-                    </span>
-                  )}
                 </label>
+                {formData.PDM && (
+                  <div className="field-metadata">
+                    <input
+                      type="text"
+                      className="utente-input"
+                      placeholder="Utente"
+                      value={formData.PDMUtente || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, PDMUtente: e.target.value }))}
+                    />
+                    {formData.PDMData && (
+                      <span className="data-display">
+                        {new Date(formData.PDMData).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' })}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="modal-field modal-field-select">
                 <label className="select-label">FILE T/L</label>
-                <div className="select-with-icon">
-                  <select
-                    value={formData.FileLaminaTelaio || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, FileLaminaTelaio: e.target.value || null }))}
-                  >
-                    <option value="">Nessuno</option>
-                    <option value="CLIENTE">Cliente</option>
-                    <option value="TOP">TOP</option>
-                    <option value="BOTTOM">BOTTOM</option>
-                    <option value="TOP+BOTTOM">TOP+BOTTOM</option>
-                  </select>
-                  {formData.FileLaminaTelaio && (
-                    <span
-                      className="field-info clickable"
-                      title={formData.FileLaminaTelaioData ? `${new Date(formData.FileLaminaTelaioData).toLocaleString()} | ${formData.FileLaminaTelaioUtente || '?'}` : 'Click per impostare data/utente'}
-                      onClick={(e) => openFieldEditor('FileLaminaTelaio', e)}
-                    >
-                      📅
-                    </span>
-                  )}
-                </div>
+                <select
+                  value={formData.FileLaminaTelaio || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, FileLaminaTelaio: e.target.value || null }))}
+                >
+                  <option value="">Nessuno</option>
+                  <option value="CLIENTE">Cliente</option>
+                  <option value="TOP">TOP</option>
+                  <option value="BOTTOM">BOTTOM</option>
+                  <option value="TOP+BOTTOM">TOP+BOTTOM</option>
+                </select>
+                {formData.FileLaminaTelaio && (
+                  <div className="field-metadata">
+                    <input
+                      type="text"
+                      className="utente-input"
+                      placeholder="Utente"
+                      value={formData.FileLaminaTelaioUtente || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, FileLaminaTelaioUtente: e.target.value }))}
+                    />
+                    {formData.FileLaminaTelaioData && (
+                      <span className="data-display">
+                        {new Date(formData.FileLaminaTelaioData).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' })}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 

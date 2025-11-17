@@ -341,6 +341,38 @@
   background-color: white;
 }
 
+/* Field metadata (utente + data) */
+.field-metadata {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding-left: 20px;
+}
+
+.utente-input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 11px;
+  background-color: white;
+}
+
+.utente-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.data-display {
+  font-size: 11px;
+  color: #666;
+  white-space: nowrap;
+  padding: 4px 8px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
 .field-info {
   margin-left: auto;
   font-size: 16px;
