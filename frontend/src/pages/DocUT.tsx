@@ -10,6 +10,9 @@ import React, { useState, useEffect } from 'react';
 import { docUTApi, DocUT as DocUTType } from '../services/api';
 import './DocUT.css';
 
+// Type for UT field metadata editor
+type UTField = 'DIBA' | 'ProgrammaMyData' | 'PDM' | 'FileLaminaTelaio';
+
 const DocUT: React.FC = () => {
   const [docUTList, setDocUTList] = useState<DocUTType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -196,24 +199,46 @@ const DocUT: React.FC = () => {
 
 // Modal Component
 interface DocUTModalProps {
-  docUT: DocUT;
+  docUT: DocUTType;
   onClose: () => void;
-  onSave: (data: Partial<DocUT>) => void;
+  onSave: (data: Partial<DocUTType>) => void;
 }
 
 const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
-  const [formData, setFormData] = useState<Partial<DocUT>>(docUT);
+  const [formData, setFormData] = useState<Partial<DocUTType>>(docUT);
+
+  // Sub-modal for editing UT field metadata (data/utente)
+  const [editingField, setEditingField] = useState<UTField | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
   };
 
-  const handleCheckboxChange = (field: keyof DocUT) => {
+  const handleCheckboxChange = (field: keyof DocUTType) => {
     setFormData(prev => ({
       ...prev,
       [field]: !prev[field],
     }));
+  };
+
+  const openFieldEditor = (field: UTField, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setEditingField(field);
+  };
+
+  const closeFieldEditor = () => {
+    setEditingField(null);
+  };
+
+  const saveFieldMetadata = (field: UTField, data: string, utente: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [`${field}Data`]: data,
+      [`${field}Utente`]: utente,
+    }));
+    closeFieldEditor();
   };
 
   return (
@@ -239,8 +264,12 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                     onChange={() => handleCheckboxChange('DIBA')}
                   />
                   DI.BA.
-                  {docUT.DIBAData && (
-                    <span className="field-info" title={`${new Date(docUT.DIBAData).toLocaleString()} | ${docUT.DIBAUtente || '?'}`}>
+                  {formData.DIBA && (
+                    <span
+                      className="field-info clickable"
+                      title={formData.DIBAData ? `${new Date(formData.DIBAData).toLocaleString()} | ${formData.DIBAUtente || '?'}` : 'Click per impostare data/utente'}
+                      onClick={(e) => openFieldEditor('DIBA', e)}
+                    >
                       📅
                     </span>
                   )}
@@ -255,8 +284,12 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                     onChange={() => handleCheckboxChange('ProgrammaMyData')}
                   />
                   PROGRAMMA MYDATA
-                  {docUT.ProgrammaMyDataData && (
-                    <span className="field-info" title={`${new Date(docUT.ProgrammaMyDataData).toLocaleString()} | ${docUT.ProgrammaMyDataUtente || '?'}`}>
+                  {formData.ProgrammaMyData && (
+                    <span
+                      className="field-info clickable"
+                      title={formData.ProgrammaMyDataData ? `${new Date(formData.ProgrammaMyDataData).toLocaleString()} | ${formData.ProgrammaMyDataUtente || '?'}` : 'Click per impostare data/utente'}
+                      onClick={(e) => openFieldEditor('ProgrammaMyData', e)}
+                    >
                       📅
                     </span>
                   )}
@@ -271,8 +304,12 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                     onChange={() => handleCheckboxChange('PDM')}
                   />
                   PDM
-                  {docUT.PDMData && (
-                    <span className="field-info" title={`${new Date(docUT.PDMData).toLocaleString()} | ${docUT.PDMUtente || '?'}`}>
+                  {formData.PDM && (
+                    <span
+                      className="field-info clickable"
+                      title={formData.PDMData ? `${new Date(formData.PDMData).toLocaleString()} | ${formData.PDMUtente || '?'}` : 'Click per impostare data/utente'}
+                      onClick={(e) => openFieldEditor('PDM', e)}
+                    >
                       📅
                     </span>
                   )}
@@ -291,8 +328,12 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
                   <option value="BOTTOM">BOTTOM</option>
                   <option value="TOP+BOTTOM">TOP+BOTTOM</option>
                 </select>
-                {docUT.FileLaminaTelaioData && (
-                  <span className="field-info" title={`${new Date(docUT.FileLaminaTelaioData).toLocaleString()} | ${docUT.FileLaminaTelaioUtente || '?'}`}>
+                {formData.FileLaminaTelaio && (
+                  <span
+                    className="field-info clickable"
+                    title={formData.FileLaminaTelaioData ? `${new Date(formData.FileLaminaTelaioData).toLocaleString()} | ${formData.FileLaminaTelaioUtente || '?'}` : 'Click per impostare data/utente'}
+                    onClick={(e) => openFieldEditor('FileLaminaTelaio', e)}
+                  >
                     📅
                   </span>
                 )}
@@ -399,6 +440,87 @@ const DocUTModal: React.FC<DocUTModalProps> = ({ docUT, onClose, onSave }) => {
           </div>
 
           <div className="modal-footer">
+            <button type="button" onClick={onClose} className="btn-secondary">
+              Annulla
+            </button>
+            <button type="submit" className="btn-primary">
+              Salva
+            </button>
+          </div>
+        </form>
+
+        {/* Sub-modal for editing UT field metadata */}
+        {editingField && (
+          <UTFieldEditor
+            field={editingField}
+            data={formData[`${editingField}Data` as keyof DocUTType] as string | null}
+            utente={formData[`${editingField}Utente` as keyof DocUTType] as string | null}
+            onClose={closeFieldEditor}
+            onSave={(data, utente) => saveFieldMetadata(editingField, data, utente)}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Sub-Modal for editing UT field metadata (data/utente)
+interface UTFieldEditorProps {
+  field: UTField;
+  data: string | null;
+  utente: string | null;
+  onClose: () => void;
+  onSave: (data: string, utente: string) => void;
+}
+
+const UTFieldEditor: React.FC<UTFieldEditorProps> = ({ field, data, utente, onClose, onSave }) => {
+  const [editData, setEditData] = useState(data || new Date().toISOString().slice(0, 16));
+  const [editUtente, setEditUtente] = useState(utente || '');
+
+  const fieldNames: Record<UTField, string> = {
+    'DIBA': 'DI.BA.',
+    'ProgrammaMyData': 'PROGRAMMA MYDATA',
+    'PDM': 'PDM',
+    'FileLaminaTelaio': 'FILE LAMINA/TELAIO',
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(editData, editUtente);
+  };
+
+  return (
+    <div className="sub-modal-overlay" onClick={(e) => e.stopPropagation()}>
+      <div className="sub-modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="sub-modal-header">
+          <h3>Modifica {fieldNames[field]}</h3>
+          <button className="modal-close" onClick={onClose}>&times;</button>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="sub-modal-body">
+            <div className="form-group">
+              <label>Data:</label>
+              <input
+                type="datetime-local"
+                value={editData}
+                onChange={(e) => setEditData(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Utente:</label>
+              <input
+                type="text"
+                value={editUtente}
+                onChange={(e) => setEditUtente(e.target.value)}
+                placeholder="Nome utente"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="sub-modal-footer">
             <button type="button" onClick={onClose} className="btn-secondary">
               Annulla
             </button>
