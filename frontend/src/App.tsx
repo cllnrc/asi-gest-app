@@ -13,6 +13,7 @@ import PTH from './pages/PTH';
 import Collaudo from './pages/Collaudo';
 import Utenti from './pages/Utenti';
 import Macchine from './pages/Macchine';
+import DocUT from './pages/DocUT';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="collaudo" element={<Collaudo />} />
           <Route path="utenti" element={<Utenti />} />
           <Route path="macchine" element={<Macchine />} />
+          <Route path="doc-ut" element={<DocUT />} />
         </Route>
       </Routes>
     </BrowserRouter>

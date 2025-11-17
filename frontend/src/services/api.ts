@@ -143,6 +143,48 @@ export interface LottoDettaglio extends Lotto {
   macchina?: Macchina;
 }
 
+export interface DocUT {
+  DocUTID: number;
+  CodiceArticolo: string;
+  Descrizione: string | null;
+
+  // Sezione UT
+  DIBA: boolean;
+  DIBAData: string | null;
+  DIBAUtente: string | null;
+
+  ProgrammaMyData: boolean;
+  ProgrammaMyDataData: string | null;
+  ProgrammaMyDataUtente: string | null;
+
+  PDM: boolean;
+  PDMData: string | null;
+  PDMUtente: string | null;
+
+  FileLaminaTelaio: string | null; // 'CLIENTE' | 'TOP' | 'BOTTOM' | 'TOP+BOTTOM'
+  FileLaminaTelaioData: string | null;
+  FileLaminaTelaioUtente: string | null;
+
+  // Sezione Cliente
+  DIBACliente: boolean;
+  PDMCliente: boolean;
+  FilePP: boolean;
+
+  // Sezione Post Production
+  FotoPCB: boolean;
+  FotoProdotto: boolean;
+  TempiLavorazione: boolean;
+  FasiLavorazione: boolean;
+  PPUtente: boolean;
+  Campionatura: boolean;
+  DocProduzione: boolean;
+
+  // Metadata
+  DataInserimento: string;
+  DataModifica: string;
+  Attivo: boolean;
+}
+
 // API functions - Gestionale (Read-only ASITRON)
 export const gestionaleApi = {
   getCommesse: async (aperte?: boolean, limit = 100) => {
@@ -307,5 +349,37 @@ export const macchineApi = {
 
   deleteMacchina: async (id: number) => {
     await api.delete(`/api/macchine/${id}`);
+  },
+};
+
+// API functions - DocUT (ASI_GEST database)
+export const docUTApi = {
+  // Get articles from gestionale with DocUT documentation
+  getArticoliConDocumentazione: async (page: number = 1, pageSize: number = 30, search?: string) => {
+    const params = new URLSearchParams();
+    params.append('page', page.toString());
+    params.append('page_size', pageSize.toString());
+    if (search) params.append('search', search);
+    const response = await api.get<{ items: DocUT[]; total: number }>(`/api/doc-ut?${params}`);
+    return response.data;
+  },
+
+  getDocUT: async (id: number) => {
+    const response = await api.get<DocUT>(`/api/doc-ut/${id}`);
+    return response.data;
+  },
+
+  createDocUT: async (data: Partial<DocUT>) => {
+    const response = await api.post<DocUT>('/api/doc-ut', data);
+    return response.data;
+  },
+
+  updateDocUT: async (id: number, data: Partial<DocUT>) => {
+    const response = await api.put<DocUT>(`/api/doc-ut/${id}`, data);
+    return response.data;
+  },
+
+  deleteDocUT: async (id: number) => {
+    await api.delete(`/api/doc-ut/${id}`);
   },
 };
