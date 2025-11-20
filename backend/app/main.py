@@ -66,6 +66,14 @@ except Exception as e:
     import traceback
     traceback.print_exc()
 
+try:
+    from app.routes import rifcommcli
+    print("✅ rifcommcli router imported")
+except Exception as e:
+    print(f"❌ rifcommcli import failed: {e}")
+    import traceback
+    traceback.print_exc()
+
 print("🔍 DEBUG: Router imports complete")
 
 
@@ -206,6 +214,12 @@ try:
     print("✅ anagrafiche router registered at /api")
 except Exception as e:
     print(f"❌ anagrafiche router registration failed: {e}")
+
+try:
+    app.include_router(rifcommcli.router, prefix="/api/rifcommcli", tags=["RIFCOMMCLI"])
+    print("✅ rifcommcli router registered at /api/rifcommcli")
+except Exception as e:
+    print(f"❌ rifcommcli router registration failed: {e}")
 
 print("🔍 DEBUG: Router registration complete")
 

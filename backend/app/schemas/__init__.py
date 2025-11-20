@@ -43,6 +43,14 @@ from .gestionale import (
     ArticoloList,
     ClienteList,
 )
+from .rifcommcli import (
+    RIFCOMMCLIGeneraRequest,
+    RIFCOMMCLIGeneraResponse,
+    RIFCOMMCLIResponse,
+    RIFCOMMCLIList,
+    RIFCOMMCLIAnnullaRequest,
+    RIFCOMMCLIStatistiche,
+)
 
 __all__ = [
     # Lotto
@@ -80,4 +88,11 @@ __all__ = [
     "CommessaList",
     "ArticoloList",
     "ClienteList",
+    # RIFCOMMCLI
+    "RIFCOMMCLIGeneraRequest",
+    "RIFCOMMCLIGeneraResponse",
+    "RIFCOMMCLIResponse",
+    "RIFCOMMCLIList",
+    "RIFCOMMCLIAnnullaRequest",
+    "RIFCOMMCLIStatistiche",
 ]

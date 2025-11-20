@@ -253,6 +253,24 @@ export interface DocUT {
   Attivo: boolean;
 }
 
+export interface RIFCOMMCLIResponse {
+  RIFCOMMCLI: string;
+  DataGenerazione: string;
+  UtenteGenerazione: string;
+  StatoUtilizzo: 'GENERATO' | 'UTILIZZATO' | 'ANNULLATO';
+  DataUtilizzo: string | null;
+  Note: string | null;
+}
+
+export interface RIFCOMMCLIStatistiche {
+  TotaleGenerati: number;
+  TotaleUtilizzati: number;
+  TotaleAnnullati: number;
+  TotaleInAttesa: number;
+  UltimoGenerato: string | null;
+  UltimaDataGenerazione: string | null;
+}
+
 // API functions - Gestionale (Read-only ASITRON)
 export const gestionaleApi = {
   getCommesse: async (aperte?: boolean, limit = 100) => {
@@ -524,5 +542,47 @@ export const macchineApi = {
 
   deleteMacchina: async (id: number) => {
     await api.delete(`/api/macchine/${id}`);
+  },
+};
+
+// API functions - RIFCOMMCLI (ASI_GEST database)
+export const rifcommcliApi = {
+  genera: async (utenteGenerazione: string, note?: string) => {
+    const response = await api.post<RIFCOMMCLIResponse>('/api/rifcommcli/genera', {
+      UtenteGenerazione: utenteGenerazione,
+      Note: note,
+    });
+    return response.data;
+  },
+
+  getLista: async (stato?: string, page = 1, pageSize = 50) => {
+    const params = new URLSearchParams();
+    if (stato) params.append('stato', stato);
+    params.append('page', page.toString());
+    params.append('page_size', pageSize.toString());
+    const paramsStr = params.toString();
+    const response = await api.get<{ items: RIFCOMMCLIResponse[]; total: number; page: number; page_size: number }>(
+      `/api/rifcommcli/lista${paramsStr ? '?' + paramsStr : ''}`
+    );
+    return response.data;
+  },
+
+  annulla: async (rifcommcli: string, note?: string) => {
+    const response = await api.post(`/api/rifcommcli/annulla/${rifcommcli}`, {
+      Note: note,
+    });
+    return response.data;
+  },
+
+  getStatistiche: async () => {
+    const response = await api.get<RIFCOMMCLIStatistiche>('/api/rifcommcli/statistiche');
+    return response.data;
+  },
+
+  riconcilia: async () => {
+    const response = await api.post<{ success: boolean; message: string; riconciliati: number; numeri: string[] }>(
+      '/api/rifcommcli/riconcilia'
+    );
+    return response.data;
   },
 };
