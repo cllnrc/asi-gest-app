@@ -351,6 +351,7 @@ PercAvanzamento = (QtaProdotta / QtaOrdine) * 100
 
 > Sezione per annotare decisioni da prendere o chiarimenti necessari
 
+- [ ] **VERIFICARE IN ASITRON:** Esiste un campo "relazione" o simile che contiene il codice articolo come lo chiama il cliente? (mappatura codice cliente → codice interno)
 - [ ] Definire formato esatto RIFCOMMCLI
 - [ ] Definire workflow notifiche per urgenze
 - [ ] Chiarire se serve tracciabilità materiali (link con ASI-TRACE)
